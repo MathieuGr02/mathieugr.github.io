@@ -13,17 +13,17 @@ class FileReformater:
             for md_file in os.listdir(f'_notebooks/{folder}'):
                 images_folder = f'{md_file[:-6]}_files'
 
-                if os.path.isdir(f'_posts/{images_folder}'):
-                    self.relocate_images(images_folder)
-                    self.rename_images(f'{md_file[:-6]}.md', images_folder)
+                if os.path.isdir(f'_{folder}/{images_folder}'):
+                    self.relocate_images(folder, images_folder)
+                    self.rename_images(folder, f'{md_file[:-6]}.md', images_folder)
 
 
     def convert_to_markdown(self, folder: str = None, file: str = None):
-        command = f'cmd /c jupyter nbconvert --output-dir=_posts --to markdown -- _notebooks/{folder}/{file}.ipynb'
+        command = f'cmd /c jupyter nbconvert --output-dir=_{folder} --to markdown -- _notebooks/{folder}/{file}.ipynb'
         os.system(command)
         print('-- Converted all notebooks to markdown --')
 
-    def relocate_images(self, file_name: str):
+    def relocate_images(self, folder, file_name: str):
         output_folder = f'images/{file_name}'
 
         # Create directory in images if it doesn't exist
@@ -41,24 +41,25 @@ class FileReformater:
 
         # Copies over everything from one directory in _posts to the directory in images
 
-        for file in os.listdir(f'_posts/{file_name}'):
-            source = f'_posts/{file_name}/{file}'
+        for file in os.listdir(f'_{folder}/{file_name}'):
+            source = f'_{folder}/{file_name}/{file}'
             destination = f'images/{file_name}/{file}'
+            print(source, destination)
             if os.path.isfile(source):
                 shutil.move(source, destination)
                 print(f' --- Moved {source} to {destination} --- ')
 
         # Deletes empty directory
-        os.rmdir(f'_posts/{file_name}')
+        os.rmdir(f'_{folder}/{file_name}')
         print('-- Relocated all notebook images to images directory --')
 
-    def rename_images(self, md_files: str, images_folder: str):
-        content = [line for line in open(f'_posts/{md_files}')]
-        writer = open(f'_posts/{md_files}', 'w')
+    def rename_images(self, folder: str, md_files: str, images_folder: str):
+        content = [line for line in open(f'_{folder}/{md_files}')]
+        writer = open(f'_{folder}/{md_files}', 'w')
 
         for index, line in enumerate(content):
             if '![png]' in line:
-                new_line = f'![png](/images/{line[7:-2]})\n'
+                new_line = f'![png](../images/{line[7:-2]})\n'
                 content[index] = new_line
 
         writer.write(''.join(content))
@@ -66,4 +67,4 @@ class FileReformater:
         print('-- Renamed all images references in markdown files --')
 
 if __name__ == '__main__':
-  FR = FileReformater('computational-biology')
+  FR = FileReformater('Computational-Biology')

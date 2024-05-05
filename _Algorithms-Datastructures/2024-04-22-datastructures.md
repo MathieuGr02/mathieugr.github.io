@@ -360,7 +360,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_19_0.png)
+![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_19_0.png)
     
 
 
@@ -405,7 +405,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_21_0.png)
+![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_21_0.png)
     
 
 
@@ -435,7 +435,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_23_0.png)
+![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_23_0.png)
     
 
 
@@ -461,7 +461,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_25_0.png)
+![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_25_0.png)
     
 
 
@@ -513,7 +513,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_29_0.png)
+![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_29_0.png)
     
 
 
@@ -539,7 +539,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_31_0.png)
+![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_31_0.png)
     
 
 
@@ -978,7 +978,7 @@ Thus the height of a red-black tree is $O(\log_2(n))$. Because red-black-trees a
 
 Inserting and deleting as in binary search trees is not possible as it does not preserve the red-black property. We use an operation called rotation to fix this.
 
-![png](../images/rotation_redblacktree.png)
+![png](../images/../images/rotation_redblacktree.png)
 
 
 ```python

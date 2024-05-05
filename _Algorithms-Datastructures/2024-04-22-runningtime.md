@@ -41,7 +41,7 @@ plt.show();
 
 
     
-![png](../images/2024-04-22-runningtime_files/2024-04-22-runningtime_4_0.png)
+![png](../images/../images/2024-04-22-runningtime_files/2024-04-22-runningtime_4_0.png)
     
 
 
@@ -74,7 +74,7 @@ plt.show();
 
 
     
-![png](../images/2024-04-22-runningtime_files/2024-04-22-runningtime_7_0.png)
+![png](../images/../images/2024-04-22-runningtime_files/2024-04-22-runningtime_7_0.png)
     
 
 
@@ -101,7 +101,7 @@ plt.show();
 
 
     
-![png](../images/2024-04-22-runningtime_files/2024-04-22-runningtime_9_0.png)
+![png](../images/../images/2024-04-22-runningtime_files/2024-04-22-runningtime_9_0.png)
     
 
 
@@ -134,7 +134,7 @@ plt.show();
 
 
     
-![png](../images/2024-04-22-runningtime_files/2024-04-22-runningtime_12_0.png)
+![png](../images/../images/2024-04-22-runningtime_files/2024-04-22-runningtime_12_0.png)
     
 
 

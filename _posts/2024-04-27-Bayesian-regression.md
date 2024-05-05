@@ -1,10 +1,10 @@
 ---
-layout: post
 title: Bayesian regression
+layout: collection
 description: Derivation and usage of Bayesian regression
-tag: programming
 tag: machine_learning 
-tag: math
+mathjax: true
+toc: true
 ---
 
 

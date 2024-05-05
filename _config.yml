@@ -106,7 +106,7 @@ analytics:
 author:
   name             : "Mathieu Groenen"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an **amazing** person."
+  bio              : #
   location         : #
   email            : #
   links:
@@ -291,3 +291,15 @@ defaults:
       comments: # true
       share: true
       related: true
+
+# Collections
+collections:
+  Computational-Biology:
+    output: true
+    permalink: /:collection/:path/
+  Machine-Learning:
+    output: true
+    permalink: /:collection/:path/
+  Algorithms-&-Datastructures:
+      output: true
+      permalink: /:collection/:path/
