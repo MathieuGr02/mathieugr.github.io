@@ -67,4 +67,4 @@ class FileReformater:
         print('-- Renamed all images references in markdown files --')
 
 if __name__ == '__main__':
-  FR = FileReformater('Machine-Learning')
+  FR = FileReformater('Computational-Biology')
