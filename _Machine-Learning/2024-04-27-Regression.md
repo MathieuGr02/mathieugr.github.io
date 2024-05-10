@@ -73,10 +73,12 @@ $$
 &= \arg \min_\mathbf{w} \sum_i (y_i - \mathbf{w}^T \mathbf{x}_i)^2 \\
 &= \arg \min ||\mathbf{y} - X \mathbf{w} ||^2 \\
 &= RSS(\mathbf{w})
-\end{align}
+\end{align*}
 $$
 
-To find this minima, we note that $f(x) = x^2$ is a convex function and we know $||v|| \geq 0 \forall \ v \ \in \mathbb{R}^d$. Thus we know there exist a definite and single minima to this function. To find this minima we take the derivative of the residual sum of squares, or RSS, in respect to $\mathbf{w}$
+To find this minima, we note that $f(x) = x^2$ is a convex function and we know $||v|| \geq 0 \forall \ v \ \in \mathbb{R}^d$. 
+Thus we know there exist a definite and single minima to this function. 
+To find this minima we take the derivative of the residual sum of squares, or RSS, in respect to $\mathbf{w}$
 
 $$
 \begin{align*}
@@ -312,7 +314,9 @@ $$
 \mathbb{P}( w_k < k_c \sqrt{\sigma^2 S^{kk}} + \hat{w}_k) 
 \end{align*}
 $$
+
 And 
+
 $$
 \begin{align*}
 \mathbb{P}(z_k < k_c) 
@@ -482,7 +486,8 @@ $$
 \mathbb{P}(\mathbf{w} | \mathcal{D}, \sigma^2) = \frac{\mathbb{P}(\mathbf{y} | \mathbf{w}, X)\mathbb{P}(\mathbf{w} |\mathcal{F})}{\mathbb{P}(\mathbf{y} | \mathcal{F}, X)}
 $$
 
-The evidence a.k.a the marginal likelihood here depends on the model Family, but not the parameter values of a specific model in the family. From the different model families, wenwant then be able to choose the onse with the highest probability, a.k.a pick $\mathcal{F}_i$ if $\mathbb{P}(\mathbf{y} | \mathcal{F_i}, X) > \mathbb{P}(\mathbf{y} | \mathcal{F_j}, X) \forall j$, thus picking the family with the highest marginal likelihood (Bayesian score).
+The evidence a.k.a the marginal likelihood here depends on the model Family, but not the parameter values of a specific model in the family. 
+From the different model families, wenwant then be able to choose the onse with the highest probability, a.k.a pick $\mathcal{F}_i$ if $\mathbb{P}(\mathbf{y} | \mathcal{F_i}, X) > \mathbb{P}(\mathbf{y} | \mathcal{F_j}, X) \forall j$, thus picking the family with the highest marginal likelihood (Bayesian score).
 
 ### Laplace's Method
 
@@ -498,13 +503,15 @@ $$
 \Rightarrow Q^*(\theta) &= \mathbb{P}^*(\hat{\theta}) \exp \left[ - \frac{c}{2}(\theta - \hat{\theta})^2 \right]
 \end{align*}
 $$
+
 Thus we get the approximation of the integral:
 
 $$
 Z = \int Q^*(\theta)d\theta = p^*(\hat{\theta})\int \exp \left[ - \frac{c}{2}(\theta - \hat{\theta})^2 \right] = p^*(\hat{\theta}) \sqrt{\frac{2\pi}{c}}
 $$
 
-This method can be generalized to multivariate distributions, where $H$ is the hessian matrix with $H_{ij} = \frac{d^2 \ln p^*(\mathbf{\theta})}{d \theta_i d \theta_j} \Bigr|_{\mathbf{\theta} = \hat{\mathbf{\theta}}}$. The normalisation factor is given by:
+This method can be generalized to multivariate distributions, where $H$ is the hessian matrix with $H_{ij} = \frac{d^2 \ln p^*(\mathbf{\theta})}{d \theta_i d \theta_j} \Bigr|_{\mathbf{\theta} = \hat{\mathbf{\theta}}}$. 
+The normalisation factor is given by:
 
 $$
 \begin{align*}
@@ -543,7 +550,9 @@ $$
 \end{align*}
 $$
 
-If we focus on the hessian. $H = \sum_{i=1}^{n}H_i$ with $H_i = \nabla_{\mathbf{w}} \nabla_{\mathbf{w}} \log \mathbb{P}(\mathcal{D}_i | \mathbf{w})$. We can approximate each $H_i$ with a fixed matrix $H'$, $\log|H| = \log |nH| = \log (n^d |H'|) = d\log n + \log |H'|$. Thus we get
+If we focus on the hessian. $H = \sum_{i=1}^{n}H_i$ with $H_i = \nabla_{\mathbf{w}} \nabla_{\mathbf{w}} \log \mathbb{P}(\mathcal{D}_i | \mathbf{w})$. 
+We can approximate each $H_i$ with a fixed matrix $H'$, $\log|H| = \log |nH| = \log (n^d |H'|) = d\log n + \log |H'|$. 
+Thus we get
 
 $$
 \text{BIC}(\mathcal{F}, n | \mathcal{D}) := \log \mathbb{P}(\mathcal{D} | \mathbf{\hat{w}}) - \frac{d}{2}\log n \approx \log \mathbb{P}(\mathcal{D} | \mathcal{F}) + C'
@@ -557,7 +566,8 @@ $$
 
 With this functions, an event with 100% probability holds no surprise ($h(a) = -\log_2 1 = 0$) and the less likely an event is, the higher the surpise.
 
-In information theory, there exist functions / codes such that the number of bits to encode each symbol $a\in \mathcal{A}$ is essentially $-\log_2 \mathbb{P}(a)$. Symbols with higher probability require fewer bits, while symbols with lower probability require more bits, which aligns with our intuition that we should spend fewer resources (bits) on more common events and more resources on less common events to achieve efficient encoding. 
+In information theory, there exist functions / codes such that the number of bits to encode each symbol $a\in \mathcal{A}$ is essentially $-\log_2 \mathbb{P}(a)$. 
+Symbols with higher probability require fewer bits, while symbols with lower probability require more bits, which aligns with our intuition that we should spend fewer resources (bits) on more common events and more resources on less common events to achieve efficient encoding. 
 
 The BIC then can be thought of as the sum of surprises, meaning that the sum of surprises of all observations is the description length of the observations given the most probable model in $\mathcal{F}$.
 
@@ -565,7 +575,14 @@ $$
 -\text{BIC}(\mathcal{F}, n | \mathcal{D}) = \sum_{i=1}^n \left( -log_2 \mathbb{P}(y_i | \mathbf{x}_i, \mathbf{\hat{w}}) \right) + \frac{d}{2}\log_2 n
 $$
 
-For the second term $\frac{d}{2} \log_2 n$ is the description length of the model. Given our model $\mathbf{w}\in \mathbb{R}^d$, the standard parametric rate was given as $\sqrt{n}(\mathbf{\hat{w}}_n - \mathbf{w}) \sim \mathcal{N}(0, \sigma^2\underbrace{(X^T X \frac{1}{n})^{-1}}_{\rightarrow \Sigma})$, where $\frac{1}{\sqrt{n}}$ represents the magnitude of the estimation error. Looking at the 1D case, because there always exist an estimation error of $\frac{1}{\sqrt{n}}$, if we squash our $\mathbf{w}$ in the intervall [0, 1], there exist $\sqrt{n}$ levels to describe our model. In dimensions this just becomes a grid of $(\sqrt{n})^d$, thereby the number of bits to encode this grid is given by
+For the second term $\frac{d}{2} \log_2 n$ is the description length of the model. 
+Given our model $\mathbf{w}\in \mathbb{R}^d$, the standard parametric rate was given as 
+$\sqrt{n}(\mathbf{\hat{w}}_n - \mathbf{w}) \sim \mathcal{N}(0,
+\sigma^2 (X^T X \frac{1}{n})^{-1}), X^T X \frac{1}{n} \xrightarrow[]{n \rightarrow \infty} \Sigma$.
+where $\frac{1}{\sqrt{n}}$ represents the magnitude of the estimation error.
+Looking at the 1D case, because there always exist an estimation error of $\frac{1}{\sqrt{n}}$,
+if we squash our $\mathbf{w}$ in the intervall [0, 1], there exist $\sqrt{n}$ levels to describe our model. 
+In dimensions this just becomes a grid of $(\sqrt{n})^d$, thereby the number of bits to encode this grid is given by
 
 $$
 \log_2 ((\sqrt{d})^d) = \frac{d}{2}\log_2 n
@@ -599,7 +616,7 @@ $$
 \log \mathbb{P}(\mathbf{\gamma} | \pi_0) = - \lambda ||\mathbf{\gamma}||_0 + const
 $$
 
-Where $\pi_0$ is the probability that a feature is relevant and $||\gamma||_0 = \sum_{i=1}^d \gamma_i$ is the $\mathcal{l}_0$ pseudo norm, which counts the non-zero elements in the vector and $\lambda = \log \frac{1 - \pi_0}{\pi}$ which controls the sparsity of the model.
+Where $\pi_0$ is the probability that a feature is relevant and $||\gamma||\_0 = \sum_{i=1}^d \gamma_i$ is the $\mathcal{l}_0$ pseudo norm, which counts the non-zero elements in the vector and $\lambda = \log \frac{1 - \pi_0}{\pi}$ which controls the sparsity of the model.
 We can write the marginal likelihood as 
 
 $$
@@ -608,7 +625,9 @@ $$
 \mathbb{P}(\mathbf{y} | X, \mathbf{\gamma}) = \int \mathbb{P}(\mathbf{y} | X, \mathbf{w}, \mathbf{\gamma}) \mathbb{P}(\mathbf{w} | \mathbf{\gamma}) d\mathbf{w}
 $$
 
-Then for $\mathbb{P}(\mathbf{w} | \mathbf{\gamma})$, if $\gamma_j = 0$ then $w_j = 0$. If we assign a gaussian to the non-zero components with $\sigma^2_w$, which reflects our expectation of the coefficients associated with the relevant variables. Thus we get the total distribution as:
+Then for $\mathbb{P}(\mathbf{w} | \mathbf{\gamma})$, if $\gamma_j = 0$ then $w_j = 0$.
+ If we assign a gaussian to the non-zero components with $\sigma^2_w$, which reflects our expectation of the coefficients associated with the relevant variables. 
+ Thus we get the total distribution as:
 
 $$
 \mathbb{P}(w_j | \gamma_j) 
@@ -619,7 +638,9 @@ $$
 \end{cases}
 $$
 
-Then for $\sigma^2_w \rightarrow \infty$ for $\mathbb{P}(w_j | \gamma_j = 1)$ we get a uniform distribution (spike slab model). With the dirac function, we assign the total probability to zero coefficient variables and our non zero coefficient variables are gaussian distributed. We approximate the likelihood by the BIC
+Then for $\sigma^2_w \rightarrow \infty$ for $\mathbb{P}(w_j | \gamma_j = 1)$ we get a uniform distribution (spike slab model). 
+With the dirac function, we assign the total probability to zero coefficient variables and our non zero coefficient variables are gaussian distributed. 
+We approximate the likelihood by the BIC
 
 $$
 \begin{align*}
@@ -649,7 +670,8 @@ $$
 f(\mathbf{w}) = - \log \mathbb{P}(\mathcal{D} | \mathbf{w}) - \log \mathbb{P}(\mathbf{w} | \lambda) = NLL(\mathbf{w}) + \lambda||\mathbf{w}||_1
 $$
 
-This is the ***lasso regression*** (least absolute shrinkage and selection operator), which can be seen as the convex approximation of the $l_0$ norm. This type of regression forces $\mathbf{\hat{w}}$ to be sparse and the degree of sparsity depends on $\lambda$. Because $||\mathbf{w}||_1$ is not differentiable at zero, we use the so called subderivative or subgradient which is defined as 
+This is the ***lasso regression*** (least absolute shrinkage and selection operator), which can be seen as the convex approximation of the $l_0$ norm. 
+This type of regression forces $\mathbf{\hat{w}}$ to be sparse and the degree of sparsity depends on $\lambda$. Because $||\mathbf{w}||_1$ is not differentiable at zero, we use the so called subderivative or subgradient which is defined as 
 
 $$
 f(x) - f(x_0) \geq c(x - x_0)
@@ -681,7 +703,13 @@ $$
 c_j \propto \mathbf{x}_{.,j} \mathbf{r}_{-j} \quad \text{with} \quad \mathbf{r}_{-j} = \mathbf{y} - X_{-j} \mathbf{w}_{-j}
 $$
 
-Because in linear regression, the $\mathbf{r}$ - residual is orthogonal to every input feature, the magnitude of $c_j$ indicates how relevant feature $j$ is, relative to all other features. The residual vectors represents the difference between the observed response values and the predicted values by the model. $\mathbf{r}_{-j}$ then represents the part of the response that is not explained by the remaining features, without $j$. The allignement of $\mathbf{x}_j \mathbf{r}_{-j}$ measures then the allignement between the two vectors. If they are highly alligned then the dot product is large, indicating that the feature $j$ is capturing information that is not explained by the other features. If the dot product is small that both vectors are not really alligned, meaning $\mathbf{x}_j$ holds information which is already captured by the other features. This is because, if the doct prodcut is high, both vectors are closely alligned and the $\mathbf{x}$ points in the direction of the error, thus the part which the other features are unable to explain. 
+Because in linear regression, the $\mathbf{r}$ - residual is orthogonal to every input feature, the magnitude of $c_j$ indicates how relevant feature $j$ is, relative to all other features. 
+The residual vectors represents the difference between the observed response values and the predicted values by the model. 
+Then $\mathbf{r}\_{-j}$ represents the part of the response that is not explained by the remaining features, without $j$. 
+The allignement of $\mathbf{x}\_j \mathbf{r}\_{-j}$ measures then the allignement between the two vectors. 
+If they are highly alligned then the dot product is large, indicating that the feature $j$ is capturing information that is not explained by the other features. 
+If the dot product is small that both vectors are not really alligned, meaning $\mathbf{x}_j$ holds information which is already captured by the other features. 
+This is because, if the doct prodcut is high, both vectors are closely alligned and the $\mathbf{x}$ points in the direction of the error, thus the part which the other features are unable to explain. 
 For the lasso regression we get the subderivative of 
 
 $$
@@ -712,9 +740,9 @@ $$
 \end{cases}
 $$
 
-
-
-Which with the definition $\text{soft}(a;\delta) = \text{sign}(a)(|a| - \delta)_+$ and $x_+ = \max(x, 0)$ can be rewritten as 
+Which with the definition 
+$\text{soft}(a ; \delta) = \text{sign}(a)(|a| - \delta)\_+$ and $x\_+ = \max(x, 0)$ 
+can be rewritten as 
 
 $$
 \hat{w}_j = \text{soft}\left( \frac{c_j}{a_j}; \frac{\lambda}{a_j} \right)
