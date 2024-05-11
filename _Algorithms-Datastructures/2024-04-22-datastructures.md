@@ -125,7 +125,6 @@ direction RL
 
 </div>
 
-
 When using a double linked list, we store the previous object pointer in the element
 
 <div class="mermaid" style="height: 20%;">
@@ -285,6 +284,7 @@ A stack is a datastructure which follows the last-in-first-out (LIFO) principle 
 - $\texttt{push(x)}$: Puts x on top of the stack
 - $\texttt{pop()}$: Removes the item at the top of the stack
 
+
 ```python
 class Stack(LinkedList):
   def __init__(self):
@@ -367,7 +367,7 @@ A double-ended queue (deque) generalizes both, queues and stacks:
 
 # Heap
 
-A binary tree is a tree where each node has a successor node. A nearly complete binary tree is filled on all levels except for the last one, where it is partially filled from left to right. There exist two different heaps
+A binary tree is a tree where each node has at most 2 successor nodes. A nearly complete binary tree is filled on all levels except for the last one, where it is partially filled from left to right. There exist two different heaps
 
 - Max heap: A binary tree where every node is larger or equal it's children. The largest key of such a heap is at the root.
 - Min heap: A binary tree where every node is smaller or equal it's children. The smallest key of such a heap is at the root.
@@ -505,11 +505,14 @@ show_array_as_tree(heap)
 
 ## Build max heap
 
+When building the max heap, we start at the second last node (a.k.a the parents of the leaves) and sink them if needed and iterate over all the then preceding nodes until we reach the root.
 A heap with n elements has a height of $\lfloor \log_2 n \rfloor$ and there are at most, $\lceil \frac{n}{2^{h + 1}} \rceil$ nodes rooting subtrees of height h. In total, the worst case running time is 
 
 $$
 T(n) \in O(n)
 $$
+
+
 
 
 ```python
@@ -608,7 +611,10 @@ show_array_as_tree(heap)
 
 
 # Heapsort
-The concept works similair to selection sort, but here we sort from right to left.
+The concept works similair to selection sort, but here we sort from right to left. In heapsort we first build the ma heap such that the largest element is the root. 
+We swap this element to the end of the list representation of the heap and the leave to the root and then look at the list[:-1] (so the same heap without the last heap which is now our max element). 
+Then we perform sink on the new root giving us the new max heap. 
+We repeat the same process until the list is sorted
 
 ### Properties
 - In-place: Direct representation of heap as array causes no usage of extra memory
@@ -656,13 +662,13 @@ $$
 h : U \mapsto \{0, ..., m-1 \}
 $$
 
-(i.e. h = k mod m). We call $h(k)$ the hasch value of $k$.
+(i.e. h = k mod m). We call $h(k)$ the hash value of $k$.
 
 Because $k \gg m$ we can have overlap, causing different keys to be mapped to the same hash value. Here are two methods to work with these overlaps
 
 ### Chaining
 
-In chaining every hash value points to a doubly linked list, where every key with the same hash value gets stored in that doubly linked list.
+In chaining every hash value points to a doubly linked list, where every key with the same hash value gets stored in that doubly linked list. Given an array T which stores the linked list at index $h(k)$.
 
 Implementation
 - Search:
@@ -676,7 +682,7 @@ Implementation
     
 The running time of these operations is dependant on the running time of the doubly linked list.
 
-A independent uniform hash function is seen as the ideal function although it is impossible to implement. This function chooses the hash value from a uniform distribution over the values
+A independent random uniform hash function is seen as the ideal function although it is impossible to implement. This function chooses the hash value from a uniform distribution over the values
  $\{0, ...,m-1 \}$.
  The load factor $\alpha$ is defined as the ration of the number of stored elements and the number of positions in the hash table
  
@@ -765,8 +771,10 @@ class ChainingHash:
       self.hashmap[hash_key].pop(value)
 ```
 
-### Linear Probing
+### Open Addressing
 
+In open addressing, the entries are stored in the hash table itself, this has the consequence that the hash table cannot hold more entries than size $m$. Size adaption then may be needed.
+When inserting into the hash table, we first try the hash value, if that slot is occupied, we move to the right and move until we find an empty slot. For searching we do the same thing until we find the key or an empty slot. 
 Linear probing with a load of $\alpha = \frac{n}{m} < 1$ has a worst running time, when the hash has only one slot and a key is not in the hash. The expected number of probes in an unsuccessful search is then at most on average:
 
 $$
@@ -839,11 +847,20 @@ $$
 
 where $h_1$ is the probe position and $h_2$ the step size and $h_2(k)$ must be relatively prime to m.
 
-For deleting use function
+### Linear probing
+
+In linear probing we use the hash function $h_1 : U \mapsto \{0, ..., m-1\}$ and probe the sequence as 
+
+$$
+\langle h_1(k),h_1(k) + 1,.... \rangle 
+$$
+
+until we find empty slot. For deleting use function
 
 $$
 g(k, q) = (q - h_1(k)) \ \text{mod} \ m \rightarrow h(k, i) = i \Rightarrow g(k, q) = i
 $$
+
 
 ### Hash functions
 
@@ -876,6 +893,36 @@ Given a tree depth of $h$, the running time for $\texttt{minimum}$, $\texttt{max
 $$
 O(h)
 $$
+
+### Search
+
+To search for a key, we start at the root and compare the values. If the key is larger then the root, then we go to the right of the subtree, else left.
+
+### Min | Max
+
+Finding the min / max of the BST is trivial. Because every value on the left of the parent is smaller, the smallest value is at the left most leave. Same goes for the max, which is at the right most leave.
+
+### Successor
+
+Given a element of the BST, we want to find the next largest value in the tree. If there exist a right node at the given element, then taking the min value of the right subtree gives us the successor. If the right node doesn't exist, then the successor is above the given element. We go up the tree, until the first node which is the left node of another. This parent is then the successor.
+
+![successor](BST_tree_successor.png)
+
+### Predecessor
+
+Given a element of the BST, we want to find the previous largest value in the tree. If there exist a left node at the given element, then taking the max value of the left subtree gives us the predecessor. If the left node doesn't exist, then the successor is above the given element. We go up the tree, until the first node which is the right node of another. This parent is then the successor.
+
+### Insertion
+
+When inserting a new value, we start at the root and descend until the correct position
+
+### Deletion
+
+There exist different cases
+
+1. If node has no childern, then we can simply remove that value and set the node reference to None.
+2. If none has 1 child, then this child becomes the new child of the parent of the node.
+3. If the node has two children, we replace the node with the minimum of the right subtree.
 
 
 ```python
@@ -925,13 +972,13 @@ class BST:
       return self.minimum(node.right)
     
     parent = node.parent
-    while node is not None and node == node.right:
+    while node is not None and node == parent.right:
       node = parent
       parent = node.parent
       
     return parent
   
-  def insert(self, key, value):
+ def insert(self, key, value):
     node_tree = self.root
     parent = None
     while node_tree is not None:
@@ -1053,9 +1100,9 @@ $$
 2 \log_2 (n + 1)
 $$
 
-Let the black height $bh(x)$ of a node $x$ denote the number of black nodes on any simple parth from, but not including, x, down to a leaf. Firstly, we want to show that that the subtree rooted at any node $x$ contains at least 2^{bh(x)} - 1 inner nodes.
+Let the black height $bh(x)$ of a node $x$ denote the number of black nodes on any simple parth from, but not including, x, down to a leaf. Firstly, we want to show that that the subtree rooted at any node $x$ contains at least $2^{bh(x)} - 1$ inner nodes.
 
-1. Heigh of $x$ is 0: $x$ is a leaf and the subtree rooted at x contains $2^{bh(x)} - 1 = 2^0 - 1 = 0$ inner nodes.
+1. Height of $x$ is 0: $x$ is a leaf and the subtree rooted at x contains $2^{bh(x)} - 1 = 2^0 - 1 = 0$ inner nodes.
 2. $x$ > 0: Then $x$ has two children. If a child is black, it contributes 1 to $x$'s black-height but not to it's own. If a child is red  then it contributes to neither $x$'s black height or it's own. From this it follows that each child of $x$ has a black height of $bh(x) - 1$ or $bh(x)$. Since the height of the child is smaller than the one of x, by the inductive hypothesis the subtree rooted by each child has at least $2^{bh(x) - 1} - 1$ inner nodes. Thus, the subtree rooted by x contains at least $2(2^{bh(x)−1} − 1) + 1 = 2^{bh(x)} − 1$ inner nodes.
 
 Because each subtree rooted at $x$ contains atleast $2^{bh(x)} - 1$ inner nodes. If we let $h$ be the height of the tree. Since both children of a red node must be black, atleast half of the nodes on any simple path from the root to the a leaf (not including root) must be black, since after a red node there must be a black node, so atleast half of the nodes must be black. Thus the black-height of the root is atleast h/2 and thus
@@ -1064,7 +1111,7 @@ $$
 n > 2^{h/2} - 1 \Rightarrow h \leq 2 \log_2 (n + 1) 
 $$
 
-Thus the height of a red-black tree is $O(\log_2(n))$. Because red-black-trees are binary seach trees, all functionality which runs at $O(h)$, can with red-black-trees achieve a running time of $O(\log_2(n))$.
+Thus the height of a red-black tree is $O(\log_2 n)$. Because red-black-trees are binary search trees, all functionality which runs at $O(h)$, can with red-black-trees achieve a running time of $O(\log_2 n)$.
 
 ### Insertion and deletion
 
