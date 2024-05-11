@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt
 
 Arrays store a sequence of elements, where the amount of elements in an array is fixed and we can access them by their index.
 
-Suppose the array starts at the memory index of $a$ and each array element occupies $b$ bytes. Then we know that the element at index i occupies the memory range:
+Suppose the array starts at the memory index of $a$ and each array element occupies $b$ bytes and the first index position is denoted by $s$. Then we know that the element at index i occupies the memory range:
 
 $$
 [a + b(i - s), \ a + b(i - s + 1) - 1]
@@ -48,7 +48,7 @@ Dynamic arrays don't have a fixed size and can grow.
 
 Additional needed operations
 - $\texttt{append(x)}$: Adds element $x$ at the end of the array 
-- $\texttt{pop()}$:Removes element at the end of the array 
+- $\texttt{pop()}$: Removes element at the end of the array 
 - $\texttt{insert(i, x)}$: Inserts element at index i 
 - $\texttt{remove(i)}$: Removes element at index i 
 
@@ -102,7 +102,57 @@ Because a charging cost of 3 covers all running time costs, append has a constan
 
 With linked list, each element stores the value, as well as a pointer to the next object.
 
+<div class="mermaid" style="height: 20%;">
+
+```mermaid!
+classDiagram
+direction RL
+    Node_2 <|-- Node_1
+    Node_3 <|-- Node_2
+    note for Node_1 "first"
+    note for Node_3 "last"
+    
+    class Node_1{
+        +Next:
+    }
+    class Node_2{
+        +Next:
+    }
+    class Node_3{
+        +Next:
+    }
+```
+
+</div>
+
+
 When using a double linked list, we store the previous object pointer in the element
+
+<div class="mermaid" style="height: 20%;">
+
+```mermaid!
+classDiagram
+direction RL
+    Node_2 <|--|> Node_1
+    Node_3 <|--|> Node_2
+    note for Node_1 "first"
+    note for Node_3 "last"
+    
+    class Node_1{
+        +Next:
+        +Last:
+    }
+    class Node_2{
+        +Next:
+        +Last:
+    }
+    class Node_3{
+        +Next:
+        +Last:
+    }
+```
+
+</div>
 
 
 ```python
@@ -234,7 +284,6 @@ A stack is a datastructure which follows the last-in-first-out (LIFO) principle 
 
 - $\texttt{push(x)}$: Puts x on top of the stack
 - $\texttt{pop()}$: Removes the item at the top of the stack
-
 
 ```python
 class Stack(LinkedList):
@@ -375,7 +424,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_20_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_21_0.png)
     
 
 
@@ -420,7 +469,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_22_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_23_0.png)
     
 
 
@@ -450,7 +499,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_24_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_25_0.png)
     
 
 
@@ -476,7 +525,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_26_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_27_0.png)
     
 
 
@@ -528,7 +577,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_30_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_31_0.png)
     
 
 
@@ -554,7 +603,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_32_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_33_0.png)
     
 
 
@@ -653,6 +702,34 @@ adaptation of the hash function.
 In contrast to a size change of an array (where we just move
 every entry to the same index of the new memory range), we
 need to rehash all elements and insert them anew.
+
+<div class="mermaid" style="height: 20%; width: 50%">
+
+```mermaid!
+flowchart TB
+    subgraph hash table
+    1 --> i
+    i --> j
+    j --> m
+    end
+    
+    1 --> k_1
+    i --> k_5 
+    m --> k_10
+
+    k_1 --> k_2
+    k_2 --> k_1
+    
+    k_5 --> k_4
+    k_4 --> k_5
+    k_4 --> k_6
+    k_6 --> k_4
+    
+    k_10 --> k_12
+    k_12 --> k_10
+```
+
+</div>
 
 
 ```python
