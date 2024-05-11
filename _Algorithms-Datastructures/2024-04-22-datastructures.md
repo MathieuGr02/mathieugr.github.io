@@ -1,3 +1,18 @@
+---
+title: Datastructures
+layout: collection
+permalink: /Algorithms-Datastructures/Datastructures
+collection: Algorithms-Datastructures
+entries_layout: grid
+mathjax: true
+toc: true
+categories:
+  - study
+tags:
+  - programming
+---
+
+
 ```python
 from __future__ import annotations
 
@@ -360,11 +375,11 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_19_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_20_0.png)
     
 
 
-  ## Sink method
+## Sink method
 
 Let h be the height of the subtree rooted at position i, then we have $O(h)$.
 
@@ -405,11 +420,11 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_21_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_22_0.png)
     
 
 
-  ## Swim method
+## Swim method
   
 Swim also has a worts case running time of:
 
@@ -435,7 +450,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_23_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_24_0.png)
     
 
 
@@ -461,7 +476,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_25_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_26_0.png)
     
 
 
@@ -513,7 +528,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_29_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_30_0.png)
     
 
 
@@ -539,7 +554,7 @@ show_array_as_tree(heap)
 
 
     
-![png](../images/../images/2024-04-22-datastructures_files/2024-04-22-datastructures_31_0.png)
+![png](../images/2024-04-22-datastructures_files/2024-04-22-datastructures_32_0.png)
     
 
 
@@ -978,7 +993,7 @@ Thus the height of a red-black tree is $O(\log_2(n))$. Because red-black-trees a
 
 Inserting and deleting as in binary search trees is not possible as it does not preserve the red-black property. We use an operation called rotation to fix this.
 
-![png](../images/../images/rotation_redblacktree.png)
+![png](../images/rotation_redblacktree.png)
 
 
 ```python
@@ -1074,6 +1089,3 @@ The datastructures: [***Linked list***, ***hash table***, ***binary search tree*
 With sets we only store keys. The implementation of operations can be done based on core implementation or special algorithms and differ from datastructure. With red-black-trees, union, intersection etc can be done in $O(m \log(\frac{n}{m} + 1))$ for two red black trees of sizes $m$ and $n$ where $m \leq n$.
 
 
-```python
-
-```

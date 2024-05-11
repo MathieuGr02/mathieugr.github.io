@@ -1,3 +1,18 @@
+---
+title: Running Time
+layout: collection
+permalink: /Algorithms-Datastructures/Running-Time
+collection: Algorithms-Datastructures
+entries_layout: grid
+mathjax: true
+toc: true
+categories:
+  - study
+tags:
+  - programming
+---
+
+
 ```python
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -41,7 +56,7 @@ plt.show();
 
 
     
-![png](../images/../images/2024-04-22-runningtime_files/2024-04-22-runningtime_4_0.png)
+![png](../images/2024-04-22-runningtime_files/2024-04-22-runningtime_5_0.png)
     
 
 
@@ -74,7 +89,7 @@ plt.show();
 
 
     
-![png](../images/../images/2024-04-22-runningtime_files/2024-04-22-runningtime_7_0.png)
+![png](../images/2024-04-22-runningtime_files/2024-04-22-runningtime_8_0.png)
     
 
 
@@ -101,7 +116,7 @@ plt.show();
 
 
     
-![png](../images/../images/2024-04-22-runningtime_files/2024-04-22-runningtime_9_0.png)
+![png](../images/2024-04-22-runningtime_files/2024-04-22-runningtime_10_0.png)
     
 
 
@@ -134,7 +149,7 @@ plt.show();
 
 
     
-![png](../images/../images/2024-04-22-runningtime_files/2024-04-22-runningtime_12_0.png)
+![png](../images/2024-04-22-runningtime_files/2024-04-22-runningtime_13_0.png)
     
 
 

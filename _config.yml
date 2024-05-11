@@ -300,6 +300,6 @@ collections:
   Machine-Learning:
     output: true
     permalink: /:collection/:path/
-  Algorithms-&-Datastructures:
+  Algorithms-Datastructures:
       output: true
       permalink: /:collection/:path/
