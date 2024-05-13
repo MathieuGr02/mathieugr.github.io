@@ -12,16 +12,6 @@ tags:
   - statistics
 ---
 
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-import scipy as sp
-import seaborn as sns
-
-sns.set_theme()
-```
-
 ### Difference trial and reference sample
 
 Assume we have a cell culture where there exist an unknown underlying distribution with mean $\mu_r$ and variance $\sigma^2$ and we know perturb the system with which we get a second distribution with log values with unknown mean $\mu_t$ and variance $\sigma^2$. 
@@ -38,8 +28,7 @@ $$
 \end{align*}
 $$
 
-Given these two independent distributions, 
-we may now want to calculate true expression values of the cells, i.e. the joint distribution $ \mathbb{P}(\mu_r, \mu_t | \mathcal{D}) $.
+Given these two independent distributions, we may now want to calculate true expression values of the cells, i.e. the joint distribution $ \mathbb{P}(\mu_r, \mu_t | \mathcal{D}) $.
 
 $$
 \mathbb{P}(\mu_r, \mu_t | \mathcal{D}) 
@@ -67,7 +56,8 @@ $$
 \mathbb{P}(\mu_r, \mu_t | \mathcal{D}) \propto \left[ var(x) + var(y) + (\mu_r - \bar{x})^2 + (\mu_t - \bar{y})^2 \right]^{-\frac{2n-1}{2}}
 $$
 
-When we now want to look at the means, we can ask for example, wether $\mu_t > \mu_r$ or not. We write $\mu = \frac{\mu_r + \mu_t}{2}$, $\delta = \mu_t - \mu_r$ or $\mu_r = \mu - \frac{\delta}{2}$, $\mu_t = \mu + \frac{\delta}{2} $. Plugging this in we get
+When we now want to look at the means, 
+we can ask for example, wether $\mu_t > \mu_r$ or not. We write $\mu = \frac{\mu_r + \mu_t}{2}$, $\delta = \mu_t - \mu_r$ or $\mu_r = \mu - \frac{\delta}{2}$, $\mu_t = \mu + \frac{\delta}{2} $. Plugging this in we get
 
 $$
 \begin{align*}

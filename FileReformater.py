@@ -1,6 +1,7 @@
 import os
 import shutil
 import time
+import sys
 
 
 class FileReformater:
@@ -67,4 +68,8 @@ class FileReformater:
         print('-- Renamed all images references in markdown files --')
 
 if __name__ == '__main__':
-  FR = FileReformater('Algorithms-Datastructures')
+    if sys.argv[1] == 'all':
+        for folder in os.listdir('_notebooks'):
+            FR = FileReformater(folder)
+    else:
+        FR = FileReformater(sys.argv[1])
