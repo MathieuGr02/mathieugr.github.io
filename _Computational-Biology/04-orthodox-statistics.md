@@ -78,7 +78,7 @@ plt.show()
 
 
     
-![png](../images/2024-05-03-orthodox-statistics_files/2024-05-03-orthodox-statistics_6_0.png)
+![png](../images/04-orthodox-statistics_files/04-orthodox-statistics_6_0.png)
     
 
 
@@ -169,7 +169,7 @@ plt.show()
 
 
     
-![png](../images/2024-05-03-orthodox-statistics_files/2024-05-03-orthodox-statistics_11_0.png)
+![png](../images/04-orthodox-statistics_files/04-orthodox-statistics_11_0.png)
     
 
 

@@ -65,7 +65,7 @@ plt.show()
 
 
     
-![png](../images/2024-05-01-parameter-estimation_files/2024-05-01-parameter-estimation_3_0.png)
+![png](../images/03-parameter-estimation_files/03-parameter-estimation_3_0.png)
     
 
 
@@ -112,7 +112,7 @@ plt.show()
 
 
     
-![png](../images/2024-05-01-parameter-estimation_files/2024-05-01-parameter-estimation_5_0.png)
+![png](../images/03-parameter-estimation_files/03-parameter-estimation_5_0.png)
     
 
 

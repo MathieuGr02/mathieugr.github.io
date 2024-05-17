@@ -228,7 +228,7 @@ plt.show()
 
 
     
-![png](../images/2024-04-05-Gaussians_files/2024-04-05-Gaussians_7_0.png)
+![png](../images/05-Gaussians_files/05-Gaussians_7_0.png)
     
 
 
@@ -254,7 +254,7 @@ plt.show()
 
 
     
-![png](../images/2024-04-05-Gaussians_files/2024-04-05-Gaussians_9_0.png)
+![png](../images/05-Gaussians_files/05-Gaussians_9_0.png)
     
 
 

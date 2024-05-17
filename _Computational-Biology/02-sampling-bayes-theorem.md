@@ -87,7 +87,7 @@ plt.show()
 
 
     
-![png](../images/2024-04-27-sampling-bayes-theorem_files/2024-04-27-sampling-bayes-theorem_3_0.png)
+![png](../images/02-sampling-bayes-theorem_files/02-sampling-bayes-theorem_3_0.png)
     
 
 
@@ -181,7 +181,7 @@ plt.show()
 
 
     
-![png](../images/2024-04-27-sampling-bayes-theorem_files/2024-04-27-sampling-bayes-theorem_7_0.png)
+![png](../images/02-sampling-bayes-theorem_files/02-sampling-bayes-theorem_7_0.png)
     
 
 
@@ -219,7 +219,7 @@ plt.show()
 
 
     
-![png](../images/2024-04-27-sampling-bayes-theorem_files/2024-04-27-sampling-bayes-theorem_9_0.png)
+![png](../images/02-sampling-bayes-theorem_files/02-sampling-bayes-theorem_9_0.png)
     
 
 

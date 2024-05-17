@@ -57,9 +57,9 @@ $$
 
 ### Dirichlet integral
 
-We use a uniform prior $\mathbb{P}(\mathbf{\rho}) = (k - 1)!$. 
-The likelihood is given by $\mathbb{P}(\mathcal{D} | \mathbf{\rho}) = \prod_{k=1}^K (\rho_k)^{n_k}$.
-The likelihood of the model is then:
+We use a uniform prior $ \mathbb{P}(\mathbf{\rho}) = (k - 1)!$. 
+The likelihood is given by $\mathbb{P}(\mathcal{D} | \mathbf{\rho}) = \prod_{k=1}^K (\rho_k)^{n_k}$. 
+The likelihood of the model is then
 
 $$
 \begin{align*}
@@ -69,6 +69,7 @@ $$
     &= 
     \int \prod_{k=1}^K (\rho_k)^{n_k} (K - 1)! d \mathbf{\rho} = \frac{(K-1)!}{(N + K - 1)!} \prod_{k=1}^K n_k!
 \end{align*}
+
 $$
 
 For our problem we get then
@@ -138,8 +139,7 @@ $$
 \mathbb{P}(\mathcal{D} | M_i ) = \mathbb{P}(\mathcal{D} | \theta_*, M_i) f(M_i)
 $$
 
-Where $f(M_i) = \frac{1}{\mathbb{P}(\mathcal{D} | \theta_*, M_i)} \int \mathbb{P}(\mathcal{D} | \theta, M_i) d\theta$ which can be seen as the fraction of the volume of the parameter space that supports maximum / high likelihood. 
-The relative probability of two model depends both on the ratio of the maximum likelihood and the so called ***Occam factor*** which measures what fraction of parameters support that likelihood
+Where $f(M_i) = \frac{1}{\mathbb{P}(\mathcal{D} | \theta_*, M_i)} \int \mathbb{P}(\mathcal{D} | \theta, M_i) d\theta$ which can be seen as the fraction of the volume of the parameter space that supports maximum / high likelihood. The relative probability of two model depends both on the ratio of the maximum likelihood and the so called ***Occam factor*** which measures what fraction of parameters support that likelihood
 
 $$
 \frac{\mathbb{P}(M_i | \mathcal{D} )}{\mathbb{P}(M_j | \mathcal{D} )}
