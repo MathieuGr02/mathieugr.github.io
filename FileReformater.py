@@ -12,8 +12,9 @@ class FileReformater:
 
         if file == '*':
             for md_file in os.listdir(f'_notebooks/{folder}'):
-                images_folder = f'{md_file[:-6]}_files'
 
+                images_folder = f'{md_file[:-6]}_files'
+                print(images_folder)
                 if os.path.isdir(f'_{folder}/{images_folder}'):
                     self.relocate_images(folder, images_folder)
                     self.rename_images(folder, f'{md_file[:-6]}.md', images_folder)

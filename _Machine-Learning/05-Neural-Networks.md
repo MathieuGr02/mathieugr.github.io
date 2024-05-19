@@ -77,7 +77,7 @@ plt.show()
 Convolution is often used for image neural networks and it works by passing a kernel (filter) of weights over an image which then calculates the sum of the pixel values.
  Our input may have multiple layers which we would like to combine, for this we use a convolutional layer, which passes different filters over the different layers of the input and combines the weighted sum of all the layers to create a single layer.
 
-![convolution_gif](convolution.gif)
+![convolution_gif](../images/convolution.gif)
 
 ## Pooling
 
@@ -308,8 +308,8 @@ $$
 \mathbf{s}^t = f(\mathbf{s}^{t - 1}, \mathbf{x}^t; \mathbf{\theta})
 $$
 
-![RNN](rnn.png) <br>
-![RNN_2](rnn_output.png)
+![RNN](../images/rnn.png) <br>
+![RNN_2](../images/rnn_output.png)
 
 The state of the dynamical system is often the hidden unit of our NN, i.e. $ \mathbf{s}^t = \mathbf{h}^t$, such that $ \mathbf{h}^t = f(\mathbf{h}^{t - 1}, \mathbf{x}^t; \mathbf{\theta})$. 
 Often these networks learn for a fixed timeframe $[0, \tau]$ where at $ \mathbf{h}^{\tau}$ we compare the output with a loss function to the true label. 
@@ -325,7 +325,7 @@ The parameter sharing also reduces the number of degrees of freedom in our model
 Drawback of this version of the RNN is that an output is only given after having seen the whole input sequence. 
 We can change this by generating an output at each state $ \mathbf{h}^t$.
 
-![RNN_3](rnn_each_iter_output.png)
+![RNN_3](../images/rnn_each_iter_output.png)
 
 Every hidden unit now produces it's own output where the matrix $V$ transforms the state into a single valued output and these outputs are then compared to target that time step via a loss function.
 Generally the components of the RNN look like
@@ -341,7 +341,7 @@ Calculating the gradient becomes expensive as we need a forward pass through the
 Because then each time step depends on the previous, our runnint time $O(\tau)$ cannot be reduced by parallelization.
 We can simplify our RNN by having our hidden state at $ \mathbf{h}^t$ not directly on the hidden state $ \mathbf{h}^{t-1}$ but on the output $ \mathbf{o}^{t-1}$.
 
-![simplified_rnn](simplified_rnn.png)
+![simplified_rnn](../images/simplified_rnn.png)
 
 The problem with this is that our hidden state is much more expressive then the output value. 
 An advantage on the other hand is that for any loss function at time step $t$ because all time steps are decoupled, training can be parallelized. 
@@ -360,3 +360,128 @@ Here then the two RNNs are trained jointly to maximize the average $\log \mathbb
 
 ## Long Short-term memory (LSTM) cells
 
+Eventhough RNNs can keep track of arbitrary long-term dependecies, the problem often lies that we can only compute with a finite precision which causes Gradients to vanish or explode. 
+Using a LSTM unit partially solves this problem, because LSTMs allow gradients to flow unchanged.
+A standard LSTM consists of
+
+1. Cell
+2. Three regulators / gates
+3. Input: Controls to which extent a new value flows into the cell
+4. Output: Controls to which extent a value remains in the cell.
+5. Forget gate: Controls to which extens the currecnt value is used to compute the output activation
+
+![LSTM](../images/lstm.png)
+
+The blue box defines the RNN cell. 
+
+## Cell state
+The top line, the so called cell state $ \mathbf{c}^{t}$, allows the flow of unchanged information through the network and helps with the preservation of context when learning long-term dependecies.
+
+## Forget Gate
+The forget gate alters the state of the cell based on the current input $ \mathbf{x}^t$ and the output $ \mathbf{h}^{t-1}$ of the previous cell. This layer basically decides what information we're going to throw away from the cell state.
+
+$$
+f^t = \sigma(W^f [\mathbf{h}^{t-1}, \mathbf{x}^t] + \mathbf{b}^f)
+$$
+
+![forget_gate](../images/forget_gate.png)
+
+## Input Gate
+The input gate decides and computes values to be updated in the state cell
+
+$$
+\mathbf{i}^t =  \sigma(W^i [\mathbf{h}^{t-1}, \mathbf{x}^t] + \mathbf{b}^i) \\
+\tilde{\mathbf{c}}^t =  \tanh(W^c [\mathbf{h}^{t-1}, \mathbf{x}^t] + \mathbf{b}^c)
+$$
+
+![input_gate](../images/input_gate.png)
+
+Then together with the forget gate these two gates update the old cell state
+
+$$
+\mathbf{c}^t = \mathbf{f}^t \circ \mathbf{c}^{t-1} + \mathbf{i}^t \circ  \tilde{\mathbf{c}}^t
+$$
+
+![cell_update](../images/cell_update.png)
+
+## Output gate
+
+The output gate then computes the output from the cell state ($\mathbf{h}^t$)which is then sent to the next cell.
+
+$$
+\mathbf{o}^t = \sigma(W^o [\mathbf{h}^{t-1}, \mathbf{x}^t] + \mathbf{b}^o) \\
+\mathbf{h}^t = tanh(\mathbf{c}^t) \circ \mathbf{o}^t
+$$
+
+![output_gate](../images/output_gate.png)
+
+## Bidirectional LSTM
+
+Bi-LSTM (Bidirectional Long Short-Term Memory) is a type of recurrent neural network (RNN) that processes sequential data in both forward and backward directions. 
+It combines the power of LSTM with bidirectional processing, allowing the model to capture both past and future context of the input sequence. 
+It consists of two LSTM layers: one processing the sequence in the forward direction and the other in the backward direction. Each layer maintains its own hidden states and memory cells.
+
+## Word embeddings
+
+To have words as inputs for our RNNs we need a representation of a word in a sentence. This encoding often happens through encoders and decoders which learn the context of words or by use of vector representation where a word is represented as a vector in a multidimensional space.
+
+# Language models
+
+A simple language model may consists of a 
+
+1. Input layer
+2. Word embedding: A encoder for context specific representation of words
+3. Hidden layer: enables flexible, non-linear mappings
+4. Output layer: Predicts Probability for next word.
+
+This implementation overcomes the sparsity problem where specific sentences don't often appear in training data. We only need small window of context to predict next word.
+Problems with this model is that the fixed window is often to small, i.e. we want more context of the surrounding words. 
+The window is then never large enough. 
+There is also no symmetrie in this model, different inputs are multiplied by completely different weights and it doesn't allow for arbitraty input length.
+
+Using instead an RNN with the same layer structure as before allows us to handle input lengths of arbitrary size. 
+Context is kept through the states, the model doesn't increase in size for longer inputs, and the same weights are applied at each step (Symmetrie in how inputs are processed).
+The disadvantages are that the recurrent computation is slow (BPTT) and information loss (Vanishing gradient -> LSTM).
+
+The training of such models is done by getting a large amount of text and at every step try to predict the next word and compare it to the actual word by a loss function which is minimized during training.
+Generating new text is then done by giving a start word and use the output for the next input and so on.
+
+## Evaluating Language models
+
+The standard evaluation metric for Language models is perplexity. The preplexity is basically a measure of the degree of uncertainty of a LM when it generates a new word.
+A lower perplexity therefor means a lower uncertainty.
+
+$$
+\text{perplexity} = \prod_{t=1}^T \left(\frac{1}{P_{LM}(\mathbf{x}^{t+1} | \mathbf{x}^t, ..., \mathbf{x}^1)} \right)^{1 / T}
+$$
+
+The inverse probability is the probability of a sentence, T is the number of words. 
+
+# Interpretability in deep learning models
+
+In general NN are hard to interpret.
+A question then may be, can we optimise a NN to be interpretable and accurate?
+Looking at RNNs we may at each step produce a binary output [0, 1] over N samples for T_n timesteps. We train a RNN with the loss
+
+$$
+\lambda \psi(W) + \sum_{n=1}^N \sum_{t=1}^{T_n} \text{loss}(y_{nt}, \hat{y}_{nt}(x_{nt}, W))
+$$
+
+where $\psi$ is a regularizer (L1 / L2) and $\lambda$ is a regularization strength.
+
+Then in the training of our RNN we pass our data $X$ through our RNN to make predictions $ \mathbf{\hat{y}}$ and then with this RNN we train a binary decision tree on $X$ and $ \mathbf{\hat{y}}$ with which we try to match the RNN predictions.
+We then use this decision tree to calculate the average path length, which is similair to the cost of simulating an average example and use than that as the reguralizor
+
+$$
+\lambda \sum_{n=1}^N \sum_{t=1}^{T_n} \text{pathlength}(x_{nt}, y_{nt}) + \sum_{n=1}^N \sum_{t=1}^{T_n} \text{loss}(y_{nt}, \hat{y}_{nt}(x_{nt}, W))
+$$
+
+Which basically causes our networks to be trained in such a way that they can be approximiated by decision trees with a small average path length.
+But because decision trees aren't differentiable, which is why we then mimic the decision tree by a second network (surrogate network). This surrogate network takes as input the model characterized by the weights of the trained RNN and then try to approximate the average path length of the decision tree, which is trained on the pair $X$ and $ \mathbf{\hat{y}}$.
+
+Thus at every step out RNN makes predictions, we train a new decision tree which gives us a average path length and simultaniously we train a second NN which tries to estimate the average path length based on the RNN model.
+Given a fixed surrogate NN, we optimize our initial RNN via gradient descent and for the next step given fixed weights of our RNN we find the best surrogate NN.
+
+# References
+
+LSTM: https://colah.github.io/posts/2015-08-Understanding-LSTMs/
