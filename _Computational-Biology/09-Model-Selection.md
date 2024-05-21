@@ -12,6 +12,15 @@ tags:
   - statistics
 ---
 
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib import cm
+sns.set_theme()
+```
+
 Dependence in gene presence
 
 Assume we're analyzing the presence of two genes in n different genomes. Each gene can then either be present or not present in each genome.
@@ -148,6 +157,47 @@ $$
 $$
 
 The first ratio is the ratio of probability of our best likelihoods, the ratio of our best models. The second ratio, a.k.a the occams factor is the ratio of the parameter space of the models which support this high likelihood. A simple model often has a higher fraction compared to the more complex model, as the space of the simple model is much smaller, creating more density close to the MLE.
+
+
+```python
+x = np.arange(0, 1, 0.01)
+X, Y = np.meshgrid(x, x)
+#Z = X**3 - Y**3 + X**Y if X + Y < 1 else 0
+
+Z = np.zeros(X.shape)
+for i, x_i in enumerate(X):
+    for j, y_i in enumerate(Y):
+        if x_i[i] + y_i[j] <= 1:
+            Z[i, j] =  x_i[i]**3 - y_i[j]**3 + x_i[i]**y_i[j] 
+
+
+fig = plt.figure(figsize=plt.figaspect(0.5))
+
+ax1 = fig.add_subplot(1, 2, 1, projection='3d')
+ax1.plot([0, 0], [0, 0], [0, 1], color='red')
+ax1.plot([0, 0], [0, 1], [0, 0], color='red')
+ax1.plot([0, 1], [0, 0], [0, 0], color='red')
+ax1.plot([0, 1], [1, 0], [0, 0], color='red')
+ax1.plot([0, 0], [1, 0], [0, 1], color='red')
+ax1.plot([1, 0], [0, 0], [0, 1], color='red')
+ax1.set_title('Simplex')
+ax1.set_ylabel('y')
+ax1.set_xlabel('x')
+ax1.set_zlabel('z')
+
+ax2 = fig.add_subplot(1, 2, 2, projection='3d')
+
+ax2.plot_surface(X, Y, Z, cmap=cm.viridis,
+                       linewidth=0, rstride=5, cstride=5)
+
+plt.show()
+```
+
+
+    
+![png](../images/09-Model-Selection_files/09-Model-Selection_6_0.png)
+    
+
 
 For an independent model we get 
 

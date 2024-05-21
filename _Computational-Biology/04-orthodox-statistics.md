@@ -173,7 +173,144 @@ plt.show()
     
 
 
+In the case of orthodox statistics, we would like to find the range of parameter values $t_0$ that are not rejected by the data.
+
+For this we again look at our likelihood function
+
+$$
+\mathbb{P}(\mathcal{D} | t_0, I) = \frac{\Theta(\min(t_i) - t_0)}{\tau^n} e^{-n(\bar{t} - t_0)/\tau}
+$$
+
+The likelihood itself depends on the data through 3 parameters
+
+1. The amount of datapoints $n$
+2. The earliest datapoint $\min(t_i)$
+3. The mean of the data points.
+
+Here we fix $n = 3$ and look only at $t_0$ and $\bar{t}$. 
+We want to choose a statistic as an estimator for our parameter of interest $t_0$. 
+Because we have that $\langle t \rangle = t_0 + \tau$, a good estimator for $t_0$ is then $\bar{t} - \tau$.
+
+In order to decide wether the data rejects a given hypothesis $t_0$ given the observed value of the statistic $\bar{t}$ we have to determine the sampling distribution of the statistic.
+
+$$
+\mathbb{P}(\bar{t} | t_0, \tau, n) = \frac{n}{(n-1)! \tau^n} (\bar{t} - t_0)^{n-1}e^{-n(\bar{t}-t_0)/\tau}
+$$
+
+With this distribution we then find the $t_0$ such that the $\bar{t}$ is just in the 95 % confidence intervall, i.e. we find the left and right 0.025 p values.
+
 
 ```python
+dist = lambda t, t_0 :  27/2  * (t - t_0)**2 * np.exp(-3 * (t - t_0)) 
 
+t_min = np.arange(10, 14, 0.1)
+t_max = np.arange(14, 17, 0.1)
+
+m_max = 0 
+for t_0 in np.arange(10, 17, 0.1):
+    val = np.round(t_0, 1)
+    index = np.where(np.round(t_min, 1) == val)[0][0]
+    pl = np.sum(dist(t_min[index:], t_0) * 0.1)
+    if pl < 0.025:
+        m_max = t_0
+        break
+
+m_min = 0
+for t_0 in np.arange(10, 17, 0.1):
+    pr = np.sum(dist(t_max, t_0) * 0.1)
+    if pr >= 0.025:
+        m_min = t_0
+        break
+        
+fig, axs = plt.subplots(1, 2, figsize=(10, 6))
+
+t_left = np.arange(m_min, 17, 0.1)
+t_right = np.arange(m_max, 17, 0.1)
+axs[0].plot(t_left, dist(t_left, m_min))
+axs[1].plot(t_right, dist(t_right, m_max))
+plt.show()
 ```
+
+
+    
+![png](../images/04-orthodox-statistics_files/04-orthodox-statistics_13_0.png)
+    
+
+
+## Confidence intervalls
+
+If we look at many different data-sets, and construct the 95% condfidence intervall for each data-set, then in the long run, 95% of the time the confidence interval will cover the true value of the parameter $t_0$. 
+The confidence doesn't tell us how confident we can be, that $t_0$ lies in our confidence interval.
+The fact that our confidence interval gave us a value for $t_0$ which we now not to be possible lies in the fact that we summarized our data with the statistic $\bar{t}$ instead of all the data.
+
+# Sufficient Statistics
+
+If we want to find out whether a statistic contains all the relevant information in the data regarding the parameter:
+1. Let $S(\mathcal{D})$ denote the statistic of the data
+2. Let $\alpha$ denote the parameter of interest and let $ \mathbb{P}(\mathcal{D} | \alpha) $ denote the likelihood
+3. A sufficient statistic $S(\mathcal{D})$ satisfies: $ \mathbb{P}(\mathcal{D} | \alpha) = f(\mathcal{D})g(S(\mathcal{D})| \alpha) $
+
+Thus for a sufficient statistic, the dependence on the parameter enters only through the sufficient statistic, i.e. $\alpha$ only appears in the function $g(S(\mathcal{D})|\alpha)$ which depends only on $S(\mathcal{D})$.
+
+
+$$
+\mathbb{P}(\mathcal{D} | t_0, I) 
+= 
+\frac{\Theta(t_1 - t_0)}{\tau^3} e^{- \sum_i (t_i - t_0)/\tau} = \underbrace{ \frac{e^{-\sum_i t_i / \tau}}{\tau^3} }_{f(\mathcal{D})}
+\underbrace{\Theta(t_1 - t_0)e^{nt_0/\tau}}_{g(S(\mathcal{D}) | \alpha)}
+$$
+
+From this we can then see that $t_1$ is a sufficient statistic.
+Using then the $t_1$ as a statistic we get the same confidence intervall as the bayesian posterior probability interval.
+If there is a sufficient statistic it is often visible through the posterior, where the posterior depends only in one way on the data. 
+There isn't always a sufficient statistic. 
+
+In bayesian theory the probability is often seen as the plausibility of an event given the information
+In orthodox statistics on the other hand, the probability represents the frequency at which the event occurs when it is repeated infinitely many times.
+
+# Lead cup
+
+Imagine we scoop a cup containing $m$ molecules and find that $k$ molecules contain lead.
+What is now the probability that if we pick one more molecule, that that molecule is lead.
+Given the posterior 
+
+$$
+\mathbb{P}(f | \mathcal{D}, I) = \frac{(m + 1)!}{k!(m-k)!} f^k (1 - f)^{m-k}
+$$
+
+If we want the probability of picking lead we have
+
+$$
+\mathbb{P}(lead | \mathcal{D}, I) 
+= 
+\int_{0}^1 \mathbb{P}(lead, f | \mathcal{D}, I) df 
+= 
+\int_{0}^1\mathbb{P}(lead, f| \mathcal{D}, I) df
+=
+\int_{0}^1\mathbb{P}(lead| f, \mathcal{D}, I) \mathbb{P}(f | \mathcal{D} , I) df
+= 
+\int_{0}^1 f \mathbb{P}(f | \mathcal{D} , I) df
+$$
+
+This is just the expectation of the posterior
+
+$$
+\mathbb{P}(lead | \mathcal{D}, I)  
+= 
+\int_{0}^1 f \mathbb{P}(f | \mathcal{D} , I) df
+=
+\frac{(m + 1)!}{k!(m-k)!} \int_{0}^1 f^{k+1} (1 - f)^{m-k} df
+\overset{\text{Beta integral}}{=}
+\frac{(m + 1)!}{k!(m-k)!} \frac{(k+1)!(m-k)!}{(m+2)!} 
+=
+\frac{k + 1}{m + 2}
+$$
+
+Then for $m \rightarrow 0$, i.e. if we dont have any molecules in our cup, then also $k = 0$ and the probability to get a lead molecule is $ \frac{1}{2} $. 
+Also in the limit of large $m$ and $k$, the $+1$ and $+2$ become irrelevant.
+This is the rule of succession. 
+If we perform $m$ consecutive experiments and have $k$ successes then the probability of the next experiment being a success is given by 
+
+$$
+\mathbb{P}(success | m, k, I) = \frac{k + 1}{m + 2}
+$$

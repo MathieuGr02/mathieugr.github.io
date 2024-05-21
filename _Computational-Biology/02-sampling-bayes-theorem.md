@@ -303,8 +303,3 @@ $$
 </details>
 
 The probability $\mathbb{P}(\mathcal{H}_n | \mathcal{D} I)$ is the so called posterior. The bayes formula can be thought of as the updating of our prior belief after observing the data, the posterior gives then the probability of how likely the data is given the specific hypothisis over how likely it is in general to get this data. 
-
-
-```python
-
-```

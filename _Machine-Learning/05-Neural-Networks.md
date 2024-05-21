@@ -349,7 +349,7 @@ The gradient at step $t$ can be computed now in isolation.
 Because then now our training set provides the ideal output of our systems we can instead of using our output use the target variables as input for our new state, this is called ***Teacher forcing***.
 This setup then allows us to calculate each state separate and thus parallel.
 
-![teacher_forcing](teacher_forcing.png)
+![teacher_forcing](../images/teacher_forcing.png)
 
 ## Sequence to sequence
 
