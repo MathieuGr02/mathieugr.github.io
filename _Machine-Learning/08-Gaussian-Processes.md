@@ -1,3 +1,20 @@
+---
+title: Gaussian Processes
+layout: collection
+permalink: /Machine-Learning/Gaussian-Processes
+collection: Machine-Learning
+entries_layout: grid
+mathjax: true
+toc: true
+categories:
+  - study
+tags:
+  - mathematics
+  - statistics
+  - machine-learning 
+---
+
+
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
@@ -33,7 +50,7 @@ plt.show()
 
 
     
-![png](../images/08-Gaussian-Processes_files/08-Gaussian-Processes_2_0.png)
+![png](../images/08-Gaussian-Processes_files/08-Gaussian-Processes_3_0.png)
     
 
 
@@ -64,7 +81,7 @@ plt.show()
 
 
     
-![png](../images/08-Gaussian-Processes_files/08-Gaussian-Processes_3_0.png)
+![png](../images/08-Gaussian-Processes_files/08-Gaussian-Processes_4_0.png)
     
 
 
@@ -212,7 +229,7 @@ plt.show()
 
 
     
-![png](../images/08-Gaussian-Processes_files/08-Gaussian-Processes_6_0.png)
+![png](../images/08-Gaussian-Processes_files/08-Gaussian-Processes_7_0.png)
     
 
 

@@ -1,3 +1,20 @@
+---
+title: SVM
+layout: collection
+permalink: /Machine-Learning/SVM
+collection: Machine-Learning
+entries_layout: grid
+mathjax: true
+toc: true
+categories:
+  - study
+tags:
+  - mathematics
+  - statistics
+  - machine-learning 
+---
+
+
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
@@ -206,7 +223,7 @@ plt.show()
 
 
     
-![png](../images/07-SVM-and-Kernels_files/07-SVM-and-Kernels_4_0.png)
+![png](../images/07-SVM-and-Kernels_files/07-SVM-and-Kernels_5_0.png)
     
 
 
@@ -317,7 +334,7 @@ axs2.view_init(elev=10)
 
 
     
-![png](../images/07-SVM-and-Kernels_files/07-SVM-and-Kernels_6_0.png)
+![png](../images/07-SVM-and-Kernels_files/07-SVM-and-Kernels_7_0.png)
     
 
 
