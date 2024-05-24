@@ -274,3 +274,33 @@ $$
 $$
 
 The first term is called the data fit, the second the complexity penalty and the third the normalisation constant.
+
+The complexity penalty has high values for small length scales. 
+Because for $l \rightarrow 0$ we get that $a \rightarrow 0$ and thus $- \frac{1}{2}  \log|K + \sigma^2 I| \rightarrow \infty$.
+Same goes for the data fit for small length scale.
+
+# Classification
+
+In our classification setting in logistic regression we have two target $y \in \{0, 1\}$.
+We use a Bernoulli RV with a success probability of $\pi(\mathbf{x}) = \mathbb{P}(1 | \mathbf{x} ) $.
+The likelihood is then the product of the outcomes
+
+$$
+\mathbb{P}(\mathbf{y} | X, f ) = \prod_{i=1}^n (\pi_f (\mathbf{x}_i ))^{y_i} (1 - \pi_f (\mathbf{x}_i ))^{1 - y_i} 
+$$
+
+In linear logistic regression we have our unboundede activation function $f(\mathbf{x} ) = \mathbf{w}^T \mathbf{x} $ which we pass through our logistic transfer function
+
+$$
+
+\sigma(f(\mathbf{x})) = \frac{1}{1+e^{-f(\mathbf{x})}} 
+$$
+
+where we set $\pi_f = \sigma(f(\mathbf{x} ))$.
+We find then our optimal solution $ \hat{\mathbf{w}}  $ by using gradient based methods to maximize the log posterior.
+We can use the kernel trick by expanding $ \mathbf{w} = X^T \mathbf{\alpha}$ and substituting the dor products with the kernel function, which then gives us the so called kernel logistic regression.
+
+
+```python
+
+```
