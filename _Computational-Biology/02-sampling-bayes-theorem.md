@@ -22,8 +22,8 @@ import scipy as sp
 sns.set_theme()
 ```
 
- Imagine we have a boxwith a total of $T$ balls in it, where among these, we have a total of $r$ red balls. If we now take out $n$ balls, how many of these are red?
-We can imagine this as that each ball has a number from 1 to $T$ and we take out a ball one by one. Then for the first ball, we have a total of $T$ possible balls from which we can pick, the second time we only have $T - 1$ balls left etc. With this we get:
+ Imagine we have a box with a total of $T$ balls in it, where among these, we have a total of $r$ red balls. If we now take out $n$ balls, how many of these are red?
+We can imagine this as that each ball has a number from $1$ to $T$ and we take out a ball one by one. Then for the first ball, we have a total of $T$ possible balls from which we can pick, the second time we only have $T - 1$ balls left etc. With this we get:
 
 $$
 T \cdot (T - 1) \cdot (T - 2) \cdot ... \cdot 2 \cdot 1 = T!
@@ -42,7 +42,10 @@ $$
 N = \frac{T!}{n!(T - n)!} = \begin{pmatrix} T \\ n \end{pmatrix}
 $$ 
 
-Because we then have no means of differentiating between these differnt possibilities, we get the uniform probability $\mathbb{P}(A_i \| I) = \frac{1}{N}$ for all these possibilities. If we now want to find out the probability of having $k$ red balls in our $n$ balls, we'd have to sum over all possibilities in $N$ where we have $k$ red balls:
+This is the so called binomial coefficient. 
+Because we then have no means of differentiating between these differnt possibilities, we get the uniform probability $\mathbb{P}(A_i \| I) = \frac{1}{N}$ for all these possibilities, 
+because there are $N$ different subsets when picking $n$ from $T$.
+If we now want to find out the probability of having $k$ red balls in our $n$ balls, we'd have to sum over all possibilities in $N$ where we have $k$ red balls:
 
 $$
 \mathbb{P}(k | I) = \frac{N(k)}{N}
@@ -70,6 +73,11 @@ $$
 
 
 ```python
+
+```
+
+
+```python
 p = 0.2
 n = 20
 k = np.arange(0, n + 1, 1)
@@ -87,7 +95,7 @@ plt.show()
 
 
     
-![png](../images/02-sampling-bayes-theorem_files/02-sampling-bayes-theorem_3_0.png)
+![png](../images/02-sampling-bayes-theorem_files/02-sampling-bayes-theorem_4_0.png)
     
 
 
@@ -151,7 +159,8 @@ Other boundary is can be derived the same way.
 
 ### Cumulative distribution
 
-We may, instead of wanting the probability of a specific $k$, the probability of a value being less or equal $k$: $\mathbb{P}(x \leq k |n, p)$. This is the so called cumulative function and can be written as:
+We may, instead of wanting the probability of a specific $k$, the probability of a value being less or equal $k$: $\mathbb{P}(x \leq k |n, p)$. 
+This is the so called cumulative function and can be written as:
 
 $$
 C(k | n, p) = \sum_{i = 0}^k \mathbb{P}(i | n, p) 
@@ -181,7 +190,7 @@ plt.show()
 
 
     
-![png](../images/02-sampling-bayes-theorem_files/02-sampling-bayes-theorem_7_0.png)
+![png](../images/02-sampling-bayes-theorem_files/02-sampling-bayes-theorem_8_0.png)
     
 
 
@@ -219,7 +228,7 @@ plt.show()
 
 
     
-![png](../images/02-sampling-bayes-theorem_files/02-sampling-bayes-theorem_9_0.png)
+![png](../images/02-sampling-bayes-theorem_files/02-sampling-bayes-theorem_10_0.png)
     
 
 
@@ -265,27 +274,42 @@ $$
 
 ### Inverse problem
 
-Looking at the inverse problem, where we don't know the probability $p$ but we know our sample size $n$ and how many times we observe a certain event as $k$, how can we go from our probability $\mathbb{P}(k | p, n)$ to the probability $\mathbb{P}(p, | k, n)$. Which is to say, how can we go from our observation to the distribution of the underlying probability given our data.
+Looking at the inverse problem, where we don't know the probability $p$ but we know our sample size $n$ and how many times we observe a certain event as $k$, how can we go from our probability $\mathbb{P}(k | p, n)$ to the probability $\mathbb{P}(p, | k, n)$. 
+Which is to say, how can we go from our observation to the distribution of the underlying probability given our data.
 
 ### Prior
 
-Within the prior we can encode our information we already know of our distribution, like it's size. We denote $\mathcal{H}_n$ as our prior hypothisis, where $n$ is the size of our problem. These hypothisis are exhaustive and mutually exclusive (M.E.E). Incase of no real prior information, we just use an uniform prior.
+Within the prior we can encode our information we already know of our distribution, like it's size. 
+We denote $\mathcal{H}_n$ as our prior hypothisis, where $n$ is the size of our problem. 
+These hypothisis are exhaustive and mutually exclusive (M.E.E). Incase of no real prior information, we just use an uniform prior.
 
 ### Likelihood
 
-With the likelihood, we calculate the probability of observing our data. Let $\mathcal{D}$ be our data, then we can write our likelihood as:
+With the likelihood, we calculate the probability of observing our data. 
+Let $\mathcal{D}$ be our data, then we can write our likelihood as:
 
 $$
-\mathbb{P}(\mathcal{D} | I) \overset{M.E.E}{=} \mathbb{P}(\mathcal{D} \sum_n \mathcal{H}_n | I) = \mathbb{P}(\sum_n \mathcal{D} \mathcal{H}_n | I) 
-\overset{M.E.E}{=} \sum_n \mathbb{P}(\mathcal{D} \mathcal{H}_n | I) \overset{\text{Product rule}}{=} \sum_n \mathbb{P}(\mathcal{D} | \mathcal{H}_n I) \mathbb{P}(\mathcal{H}_n | I)
+\begin{align*}
+    \mathbb{P}(\mathcal{D} | I) 
+    &\overset{M.E.E}{=} 
+    \mathbb{P}(\mathcal{D} \sum_n \mathcal{H}_n | I) \\
+    &= 
+    \mathbb{P}(\sum_n \mathcal{D} \mathcal{H}_n | I) \\
+    &\overset{M.E.E}{=} 
+    \sum_n \mathbb{P}(\mathcal{D} \mathcal{H}_n | I) \\
+    &\overset{\text{Product rule}}{=} 
+    \sum_n \mathbb{P}(\mathcal{D} | \mathcal{H}_n I) \mathbb{P}(\mathcal{H}_n | I)
+\end{align*}
 $$
 
-Here $\mathbb{P}(\mathcal{H}_n | I)$ denotes the probability of our hypothisis for size $n$ being true and $\mathbb{P}(\mathcal{D} | \mathcal{H}_n I)$ denotes the probability of observing our data given the hypothisis of size $n$ and our information $I$. The summation over all $n$ gives then the total probability of our data.
+Here $\mathbb{P}(\mathcal{H}_n | I)$ denotes the probability of our hypothisis for size $n$ being true and $\mathbb{P}(\mathcal{D} | \mathcal{H}_n I)$ denotes the probability of observing our data given the hypothisis of size $n$ and our information $I$. 
+The summation over all $n$ gives then the total probability of our data.
 
 
 ### Bayes Theorem
 
-With the given prior and likelihood we can calculate our wanted calculation by the use of the product rules. The bayes theorem is given by:
+With the given prior and likelihood we can calculate our wanted calculation by the use of the product rules. 
+The bayes theorem is given by:
 
 $$
 \mathbb{P}(\mathcal{H}_n | \mathcal{D} I) = \frac{\mathbb{P}(\mathcal{D}| \mathcal{H}_n I)\mathbb{P}(\mathcal{H}_n | I)}{\mathbb{P}(\mathcal{D}| I)} = \frac{\mathbb{P}(\mathcal{D}| \mathcal{H}_n I)\mathbb{P}(\mathcal{H}_n | I)}{\sum_i \mathbb{P}(\mathcal{D} | \mathcal{H}_i I) \mathbb{P}(\mathcal{H}_i | I)}
@@ -302,4 +326,5 @@ $$
 
 </details>
 
-The probability $\mathbb{P}(\mathcal{H}_n | \mathcal{D} I)$ is the so called posterior. The bayes formula can be thought of as the updating of our prior belief after observing the data, the posterior gives then the probability of how likely the data is given the specific hypothisis over how likely it is in general to get this data. 
+The probability $\mathbb{P}(\mathcal{H}_n | \mathcal{D} I)$ is the so called posterior. 
+The bayes formula can be thought of as the updating of our prior belief after observing the data, the posterior gives then the probability of how likely the data is given the specific hypothisis over how likely it is in general to get this data. 

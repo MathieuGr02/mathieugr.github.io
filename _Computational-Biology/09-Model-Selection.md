@@ -160,16 +160,18 @@ The first ratio is the ratio of probability of our best likelihoods, the ratio o
 
 
 ```python
-x = np.arange(0, 1, 0.01)
+x = np.arange(0, 1, 0.005)
 X, Y = np.meshgrid(x, x)
-#Z = X**3 - Y**3 + X**Y if X + Y < 1 else 0
 
-Z = np.zeros(X.shape)
-for i, x_i in enumerate(X):
-    for j, y_i in enumerate(Y):
-        if x_i[i] + y_i[j] <= 1:
-            Z[i, j] =  x_i[i]**3 - y_i[j]**3 + x_i[i]**y_i[j] 
+f = lambda x, y : x**2 + y**2 + 0.25
 
+Z = np.full(X.shape, None)
+for i in range(X.shape[0]):
+    for j in range(X.shape[1]):
+        if X[i, j] + Y[i, j] <= 1:
+            z_value = f(X[i, j], Y[i, j])
+            if 0 <= z_value <= 1 - X[i, j] - Y[i, j]:
+                Z[i, j] = z_value
 
 fig = plt.figure(figsize=plt.figaspect(0.5))
 
@@ -190,6 +192,17 @@ ax2 = fig.add_subplot(1, 2, 2, projection='3d')
 ax2.plot_surface(X, Y, Z, cmap=cm.viridis,
                        linewidth=0, rstride=5, cstride=5)
 
+ax2.plot([0, 0], [0, 0], [0, 1], color='red')
+
+ax2.plot([0, 0], [0, 0.33], [0, 0], color='red')
+ax2.plot([0, 0], [0.76, 1], [0, 0], color='red')
+
+ax2.plot([0, 1], [0, 0], [0, 0], color='red')
+ax2.plot([0, 1], [1, 0], [0, 0], color='red')
+ax2.plot([0, 0], [1, 0], [0, 1], color='red')
+ax2.plot([1, 0], [0, 0], [0, 1], color='red')
+ax2.set_title('Independent model surface')
+
 plt.show()
 ```
 
@@ -199,7 +212,7 @@ plt.show()
     
 
 
-For an independent model we get 
+!For an independent model we get 
 
 $$
 \mathbb{P}(\mathcal{D} | indep) = \mathbb{P}(\mathcal{D}_A) \mathbb{P}(\mathcal{D}_B) = \frac{n_A ! (n - n_A)!}{(n + 1)!} \frac{n_B ! (n - n_B)!}{(n + 1)!}
