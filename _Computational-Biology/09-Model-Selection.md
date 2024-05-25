@@ -61,7 +61,13 @@ There are seperate probabilities for each combination. The probabilities for the
 Here we use a uniform prior 
 
 $$ 
-\mathbb{P}(\rho_{AB}, \rho_{\bar{A}B}, \rho_{A\bar{B}}) = \frac{1}{3!} 
+\mathbb{P}(\rho_{AB}, \rho_{\bar{A}B}, \rho_{A\bar{B}}) = 3!
+$$
+
+Because the 3! comes from integrating over all possible possibilities
+
+$$
+\int_0^{1 - \rho_{AB} - \rho_{A\bar{B}}} d \rho_{\bar{A}\bar{B}} \int_0^{1 - \rho_{AB}} d \rho_{A\bar{B}}  \int_0^1 d \rho_{AB} 
 $$
 
 ### Dirichlet integral
@@ -79,6 +85,38 @@ $$
     \int \prod_{k=1}^K (\rho_k)^{n_k} (K - 1)! d \mathbf{\rho} = \frac{(K-1)!}{(N + K - 1)!} \prod_{k=1}^K n_k!
 \end{align*}
 
+$$
+
+Then General form of the dirichlet distribution is given by
+
+$$
+\frac{1}{B(\mathbf{\alpha})} \prod_{i=1}^K x_i^{\alpha_i - 1}, \quad B(\mathbf{\alpha}) = \frac{\prod_{i=1}^K \Gamma(\alpha_i)}{\Gamma \left( \sum_{i=1}^K \alpha_i \right)}
+$$
+
+Integrating this with $x_k = \rho_k$ and $\alpha_k - 1 = n_k$ we get
+
+$$
+\begin{align*}
+    \int \prod_{k=1}^K \rho_k^{n_k} d \mathbf{\rho}
+    &=
+    \frac{B(\mathbf{n})}{B(\mathbf{n})} \int \prod_{k=1}^K \rho_k^{n_k} d \mathbf{\rho} \\
+    &=
+    B(\mathbf{n}) \\
+    &=
+    \frac{\prod_{k=1}^K \Gamma(n_k + 1)}{\Gamma(\sum_{k=1}^K n_k + 1)} \\
+    &=
+    \frac{1}{\Gamma(\sum_{k=1}^K n_k + 1)} \prod_{k=1}^K n_k \\
+    &=
+    \frac{1}{\Gamma(N + K)} \prod_{k=1}^K n_k \\
+    &=
+    \frac{1}{(N + K - 1)!} \prod_{k=1}^K n_k \\
+\end{align*}
+$$
+
+Using this dirichlet integral identity we can get our prior constant. For $\alpha_k = 1$, $K = 4$ (we have 4 paremeters $\rho_{AB}, \rho_{A\bar{B}}, \rho_{\bar{A}B}, \rho_{\bar{A}\bar{B}}$, but $\rho_{\bar{A}\bar{B}}$ is fixed when setting the other three which is why our distribution only considers the first three but we still need to integrate over all in the dirichlet) we get 
+
+$$
+\int \prod_{k=1}^4 \rho_k^{n_k} d \mathbf{\rho} = B(\mathbf{\alpha}) = \frac{\prod_{k=1}^K \Gamma(\alpha_k)}{\Gamma(\sum_{k=1}^K \alpha_k)} = \frac{1}{(K - 1)!} = \frac{1}{3!}
 $$
 
 For our problem we get then
@@ -148,7 +186,10 @@ $$
 \mathbb{P}(\mathcal{D} | M_i ) = \mathbb{P}(\mathcal{D} | \theta_*, M_i) f(M_i)
 $$
 
-Where $f(M_i) = \frac{1}{\mathbb{P}(\mathcal{D} | \theta_*, M_i)} \int \mathbb{P}(\mathcal{D} | \theta, M_i) d\theta$ which can be seen as the fraction of the volume of the parameter space that supports maximum / high likelihood. The relative probability of two model depends both on the ratio of the maximum likelihood and the so called ***Occam factor*** which measures what fraction of parameters support that likelihood
+Where $f(M_i) = \frac{1}{\mathbb{P}(\mathcal{D} | \theta_*, M_i)} \int \mathbb{P}(\mathcal{D} | \theta, M_i) d\theta$ which can be seen as the fraction of the volume of the parameter space that supports maximum / high likelihood. 
+A narrow peak in the parameter space means that the high likelihood is confined to a few parameter 'options' (few models fit the data well), which causes the fraction to become close to one as both the MLE and the integral are close to eachother.
+A broad peak in the parameter space means that the high likelihood happens for alot of parameter 'options' (alot of different models fit the data well), which causes the fraction to become small.
+The relative probability of two model depends both on the ratio of the maximum likelihood and the so called ***Occam factor*** which measures what fraction of parameters support that likelihood
 
 $$
 \frac{\mathbb{P}(M_i | \mathcal{D} )}{\mathbb{P}(M_j | \mathcal{D} )}
@@ -158,12 +199,21 @@ $$
 
 The first ratio is the ratio of probability of our best likelihoods, the ratio of our best models. The second ratio, a.k.a the occams factor is the ratio of the parameter space of the models which support this high likelihood. A simple model often has a higher fraction compared to the more complex model, as the space of the simple model is much smaller, creating more density close to the MLE.
 
+When we then want to select our model we look at the occam factor
+
+$$
+\frac{f(M_i)}{f(M_j)} > 1 \Rightarrow f(M_i) > f(M_j)
+$$
+
+Because the fraction of model $M_i$ is larger then the fraction for model $M_j$, model $M_i$ is the preferred model. 
+Same reasoning holds for the inverse.
+
 
 ```python
 x = np.arange(0, 1, 0.005)
 X, Y = np.meshgrid(x, x)
 
-f = lambda x, y : x**2 + y**2 + 0.25
+f = lambda x, y : -0.5*(x**2 + y**2 )+ 0.5
 
 Z = np.full(X.shape, None)
 for i in range(X.shape[0]):
@@ -194,8 +244,8 @@ ax2.plot_surface(X, Y, Z, cmap=cm.viridis,
 
 ax2.plot([0, 0], [0, 0], [0, 1], color='red')
 
-ax2.plot([0, 0], [0, 0.33], [0, 0], color='red')
-ax2.plot([0, 0], [0.76, 1], [0, 0], color='red')
+ax2.plot([0, 0], [0, 0.5], [0, 0], color='red')
+ax2.plot([0, 0], [0.78, 1], [0, 0], color='red')
 
 ax2.plot([0, 1], [0, 0], [0, 0], color='red')
 ax2.plot([0, 1], [1, 0], [0, 0], color='red')
@@ -208,7 +258,7 @@ plt.show()
 
 
     
-![png](../images/09-Model-Selection_files/09-Model-Selection_6_0.png)
+![png](../images/09-Model-Selection_files/09-Model-Selection_7_0.png)
     
 
 

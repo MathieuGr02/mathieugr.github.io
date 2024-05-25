@@ -84,9 +84,11 @@ $$
 Looking at the first we cumulants:
 
 $$
-C_1 = \frac{d log\left[ M(t) \right]}{dt} \Bigr|_{t = 0} = \frac{M'(t)}{M(t)} \Bigr|_{t = 0} = \sum^n_{i=0} \frac{\frac{1}{(i-1)!}\langle x^i \rangle t^{i-1}}{M(t)} \Bigr|_{t=0} = \langle x \rangle \\
+\begin{align*}
+    C_1 &= \frac{d log\left[ M(t) \right]}{dt} \Bigr|_{t = 0} = \frac{M'(t)}{M(t)} \Bigr|_{t = 0} = \sum^n_{i=0} \frac{\frac{1}{(i-1)!}\langle x^i \rangle t^{i-1}}{M(t)} \Bigr|_{t=0} = \langle x \rangle \\
 
-C_2 = \frac{d^2 log\left[ M(t) \right]}{dt^2} \Bigr|_{t = 0} = \frac{d}{dt} \frac{M'(t)}{M(t)} \Bigr|_{t = 0} = \frac{M''(t)M(t) - M'(t)^2}{M(t)^2} \Bigr|_{t = 0} = \frac{M''(t)}{M(t)} - \left( \frac{M'(t)}{M(t)} \right)^2 \Bigr|_{t = 0} = \langle x^2 \rangle - \langle x \rangle^2
+    C_2 &= \frac{d^2 log\left[ M(t) \right]}{dt^2} \Bigr|_{t = 0} = \frac{d}{dt} \frac{M'(t)}{M(t)} \Bigr|_{t = 0} = \frac{M''(t)M(t) - M'(t)^2}{M(t)^2} \Bigr|_{t = 0} = \frac{M''(t)}{M(t)} - \left( \frac{M'(t)}{M(t)} \right)^2 \Bigr|_{t = 0} = \langle x^2 \rangle - \langle x \rangle^2
+\end{align*}
 $$
 
 This our first two cumulants are the mean and the variance of our distribution $\mathbb{P}(x)$. The third and fourth cumulants are called the skewness and kurtosis and are given by:
@@ -145,7 +147,9 @@ $$
 M(t) = e^{\mu t  + \frac{1}{2}t^2\sigma^2} \Leftrightarrow \log \left[ M(t) \right] = \mu t  + \frac{1}{2}t^2\sigma^2
 $$
 
-From this we can see that the first and second cumulants are as expected the mean and variance, but all the higher cumulants are zero. The gaussian distribution is the only distribution has this property, it is the only distribution with a finite number of non-zero cumulants.
+From this we can see that the first and second cumulants are as expected the mean and variance, but all the higher cumulants are zero. 
+The gaussian distribution is the only distribution has this property, it is the only distribution with a finite number of non-zero cumulants. 
+If we thus sum together many gaussian distribution, we again get a gaussian distribution.
 
 ### Distribution of the average
 
@@ -273,7 +277,7 @@ Assuming a general form of $\mathbb{P}(x | \mu) = f(x - \mu)$ the solution is gi
 
 ### Least squares
 
-Assume we have $M$ models that each predict the value of some quantity x in different conditions fore some system of interest. We measure the value of x in a number of conditions $i=1, 2, 3,...,n$ and denote the resulting measurements as the data $\mathcal{D}(y_1,...,y_n)$. Each of our models $M$ predicts the values of the quantity x which we denote as $(x_1, ...,x_n)$ for each condition. Assuming the measurement noise is Gaussian with standard-deviation $\sigma$ we have for the probability of the data given the predictions of a model $M$:
+Assume we have $M$ models that each predict the value of some quantity x in different conditions for some system of interest. We measure the value of x in a number of conditions $i=1, 2, 3,...,n$ and denote the resulting measurements as the data $\mathcal{D}(y_1,...,y_n)$. Each of our models $M$ predicts the values of the quantity x which we denote as $(x_1, ...,x_n)$ for each condition. Assuming the measurement noise is Gaussian with standard-deviation $\sigma$ we have for the probability of the data given the predictions of a model $M$:
 
 $$
 \mathbb{P}(\mathcal{D} | M) = \prod^n_{i=1} \frac{1}{\sqrt{2\pi} \sigma}e^{-\frac{1}{2}\frac{(y_i - x_i)^2}{\sigma^2}}
@@ -283,7 +287,7 @@ $$
 This term is maximised when we minimise the sum inside the exponent, i.e. when $\sum^{n}_{i=1}(y_i - x_i)^2$ is minimised. 
 
 Given the likelihood for a single measurement 
-$\mathbb{P}(x|\mu, \sigma) = \frac{1}{\sigma \sqrt{2 \pi}}e^{-\frac{1}{2} \left( \frac{x - \mu}{\sigma} \right) }$. 
+$\mathbb{P}(x|\mu, \sigma) = \frac{1}{\sigma \sqrt{2 \pi}}e^{-\frac{1}{2} \left( \frac{x - \mu}{\sigma} \right)^2}$. 
 The likelihood of $n$, i.i.d measurements is 
 
 $$

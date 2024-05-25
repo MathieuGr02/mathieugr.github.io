@@ -100,13 +100,19 @@ for i in n:
 
 n_95 = np.argmax(np.cumsum(posterior_approx) > 0.95)
 
-plt.plot(n, posterior, label='Posterior')
-plt.plot(n, posterior_approx, label='Posterior approximation')
-plt.fill_between(n[:n_95], posterior[:n_95], alpha=0.5, color='red')
-plt.vlines(n_95, ymin=0, ymax=0.5, color='red', label=f'95 percentile = {n_95}')
-plt.legend()
-plt.ylim([-0.001, 0.01])
-plt.xlim([0, n_95 + 100])
+fig, axs = plt.subplots(1, 2, figsize=(10, 6))
+
+axs[0].plot(n, posterior, label='Posterior')
+axs[0].plot(n, posterior_approx, label='Posterior approximation')
+axs[0].fill_between(n[:n_95], posterior[:n_95], alpha=0.5, color='red')
+axs[0].vlines(n_95, ymin=0, ymax=0.01, color='red', label=f'95 percentile = {n_95}')
+axs[0].legend()
+axs[0].set_xlim([0, n_95 + 100])
+
+axs[1].plot(n, np.cumsum(posterior_approx), label='CDF')
+axs[1].set_xlim([0, n_95 + 1000])
+axs[1].legend()
+
 plt.show()
 ```
 
@@ -126,13 +132,26 @@ $$
 \sum_{k=n}^{\infty} \mathbb{P}(\mathcal{H}_n | m, c, I) = 1 - \alpha = \epsilon \approx \frac{c-1}{m} \int_n^{\infty} \left( \frac{k}{m} \right)^{-c} dk = \left( \frac{n}{m} \right)^{-c} \Rightarrow n  = m \epsilon^{-1/(c-1)}
 $$
 
-Where does get our intervall $[m, m \epsilon^{-1/(c-1)}]$.
+Which then gives us our intervall $[m, m \epsilon^{-1/(c-1)}]$.
 
 The mean is given by 
 
 $$
-\langle n \rangle \approx \int_m^{\infty} n \mathbb{P}(n | m, c, I)dn = \int_m^{\infty} n \frac{c-1}{m} \left( \frac{n}{m} \right)^{-c} dn
-= \frac{c-1}{m^{-c + 1}} \int_m^{\infty} n^{-(c - 1)} dn = \frac{c-1}{m^{-c + 1}} \left[- \frac{1}{c-2}  n^{-(c - 2)} \right]^{\infty}_{m} = \frac{c-1}{m^{-c + 1}} \frac{1}{c-2}  m^{-(c - 2)} = \frac{c-1}{c-2}m
+\begin{align*}
+    \langle n \rangle 
+    &\approx 
+    \int_m^{\infty} n \mathbb{P}(n | m, c, I)dn  \\
+    &= 
+    \int_m^{\infty} n \frac{c-1}{m} \left( \frac{n}{m} \right)^{-c} dn \\
+    &= 
+    \frac{c-1}{m^{-c + 1}} \int_m^{\infty} n^{-(c - 1)} dn  \\
+    &= 
+    \frac{c-1}{m^{-c + 1}} \left[- \frac{1}{c-2}  n^{-(c - 2)} \right]^{\infty}_{m}  \\
+    &= 
+    \frac{c-1}{m^{-c + 1}} \frac{1}{c-2}  m^{-(c - 2)}  \\
+    &= 
+    \frac{c-1}{c-2}m
+\end{align*}
 $$
 
 The median is given by
@@ -155,10 +174,18 @@ The linear loss function is given by $L(r, n) = |r - n|$. To then minimize this 
 convex function, which has a definit minima so we take it's derivate and set it to zero
 
 $$
-\frac{d \langle L(r) \rangle }{dr} = \frac{d}{dr} \sum_n |r - n| \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) =\frac{d}{dr} \left( \sum_{r < n}
- (r - n) \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) - \sum_{r > n} (r - n) \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) \right) = \sum_{r < n} 
- \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) - \sum_{r > n} \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) \overset{!}{=} 0 \\
-\Leftrightarrow \mathbb{P}(n < r | \mathcal{D}, I) = \mathbb{P}(n > r | \mathcal{D}, I) \Rightarrow r = n_{0.5}
+\begin{align*}
+    \frac{d \langle L(r) \rangle }{dr} 
+    &= 
+    \frac{d}{dr} \sum_n |r - n| \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) \\
+    &=
+    \frac{d}{dr} \left( \sum_{r < n} (r - n) \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) - \sum_{r > n} (r - n) \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) \right) \\
+    &= 
+    \sum_{r < n} \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) - \sum_{r > n} \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) \\
+    &\overset{!}{=} 0 \\
+\Leftrightarrow \mathbb{P}(n < r | \mathcal{D}, I) &= \mathbb{P}(n > r | \mathcal{D}, I)  \\
+&\Rightarrow r = n_{0.5}
+\end{align*}
 $$
 
 #### Quadratic loss
@@ -166,10 +193,18 @@ $$
 The quadratic loss function is given by $L(r, n) = (r - n)^2$. Same rules apply and we get:
 
 $$
-\frac{d \langle L(r) \rangle }{dr} = \frac{d}{dr} \sum_n (r - n)^2 \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) = 2 \sum_n (r - n) 
-\mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) \overset{!}{=}0 \Leftrightarrow r
-\underbrace{\sum_n \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I)}_{=1} = \sum_n n \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) \\
-\Rightarrow r = \langle n \rangle
+\begin{align*}
+    \frac{d \langle L(r) \rangle }{dr} 
+    &= 
+    \frac{d}{dr} \sum_n (r - n)^2 \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) \\
+    &= 
+    2 \sum_n (r - n) \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) \\
+    &\overset{!}{=}0  \\
+    \Leftrightarrow r \underbrace{\sum_n \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I)}_{=1} 
+    &= 
+    \sum_n n \mathbb{P}(\mathcal{H}_n | \mathcal{D}, I) \\
+    \Rightarrow r &= \langle n \rangle
+\end{align*}
 $$
 
 #### Delta loss
@@ -193,14 +228,24 @@ $$
 
 #### Beta distribution
 
-Using a uniform prior $\mathbb{P}(p | I)dp = 1dp$ and a binomial distribution where thus the likelihood looks like 
-$\mathbb{P}(\mathcal{D}|p, I) = \begin{pmatrix} n \\ k \end{pmatrix} p^k (1 - p)^{n - k}$ we get the posterior for our probability p given the data as:
+Using a uniform prior $\mathbb{P}(p | I)dp = 1 dp$ and a binomial distribution where thus the likelihood looks like 
 
 $$
-\mathbb{P}(p |\mathcal{D}, I) = \frac{\mathbb{P}(\mathcal{D} | p, I)\mathbb{P}(p | I)}{\mathbb{P}(\mathcal{D} | I)}
-= \frac{\begin{pmatrix} n \\ k \end{pmatrix} p^k (1 - p)^{n - k}}{\int_0^1 \begin{pmatrix} n \\ k \end{pmatrix} q^k (1 - q)^{n - k} dq} dp
-= \frac{p^k (1 - p)^{n - k}}{\int_0^1 q^k (1 - q)^{n - k} dq} dp
-= \frac{(n+1)!}{k!(n-k)!} p^k (1-p)^{n-k}dp
+\mathbb{P}(\mathcal{D}|p, I) = \begin{pmatrix} n \\ k \end{pmatrix} p^k (1 - p)^{n - k}
+$$ 
+
+we get the posterior for our probability p given the data as:
+
+$$
+\begin{align*}
+    \mathbb{P}(p |\mathcal{D}, I) = \frac{\mathbb{P}(\mathcal{D} | p, I)\mathbb{P}(p | I)}{\mathbb{P}(\mathcal{D} | I)} 
+    &= 
+    \frac{\begin{pmatrix} n \\ k \end{pmatrix} p^k (1 - p)^{n - k}}{\int_0^1 \begin{pmatrix} n \\ k \end{pmatrix} q^k (1 - q)^{n - k} dq} dp \\
+    &= 
+    \frac{p^k (1 - p)^{n - k}}{\int_0^1 q^k (1 - q)^{n - k} dq} dp \\
+    &= 
+    \frac{(n+1)!}{k!(n-k)!} p^k (1-p)^{n-k}dp
+\end{align*}
 $$
 
 This is called the beta distribution. The general form of the beta distribution is:
@@ -277,8 +322,8 @@ $$
 
 Which is equivalent to the substitution $t(p) = - \frac{\ln (p)}{\lambda} \Rightarrow dt = - \frac{1}{p \lambda} dp$:
 $$
-\int_{p_{min}}^{p_{max}} \mathbb{P}(p | m, k) dp = - \int_{t(p_{max})}^{t(p_{min})} \tilde{\mathbb{P}}(t | m, k) dt = 
-\int_{t(p_{min})}^{t(p_{max})} \frac{1}{\lambda p} \tilde{\mathbb{P}}(t | m, k) dt
+\int_{p_{min}}^{p_{max}} \mathbb{P}(p | m, k) dp = - \int_{t(p_{max})}^{t(p_{min})} \tilde{\mathbb{P}}(t(f) | m, k) \frac{dt}{df}  df = 
+\int_{t(p_{min})}^{t(p_{max})} \frac{1}{\lambda p} \tilde{\mathbb{P}}(t(f) | m, k) dt
 $$
 
 From which follows then the rule of transformation:
