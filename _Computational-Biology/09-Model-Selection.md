@@ -186,7 +186,7 @@ $$
 \mathbb{P}(\mathcal{D} | M_i ) = \mathbb{P}(\mathcal{D} | \theta_*, M_i) f(M_i)
 $$
 
-Where $f(M_i) = \frac{1}{\mathbb{P}(\mathcal{D} | \theta_*, M_i)} \int \mathbb{P}(\mathcal{D} | \theta, M_i) d\theta$ which can be seen as the fraction of the volume of the parameter space that supports maximum / high likelihood. 
+Where $f(M\_i) = \frac{1}{\mathbb{P}(\mathcal{D} | \theta\_*, M\_i)} \int \mathbb{P}(\mathcal{D} | \theta, M\_i) d\theta $ which can be seen as the fraction of the volume of the parameter space that supports maximum / high likelihood. 
 A narrow peak in the parameter space means that the high likelihood is confined to a few parameter 'options' (few models fit the data well), which causes the fraction to become close to one as both the MLE and the integral are close to eachother.
 A broad peak in the parameter space means that the high likelihood happens for alot of parameter 'options' (alot of different models fit the data well), which causes the fraction to become small.
 The relative probability of two model depends both on the ratio of the maximum likelihood and the so called ***Occam factor*** which measures what fraction of parameters support that likelihood
@@ -262,7 +262,7 @@ plt.show()
     
 
 
-!For an independent model we get 
+For an independent model we get 
 
 $$
 \mathbb{P}(\mathcal{D} | indep) = \mathbb{P}(\mathcal{D}_A) \mathbb{P}(\mathcal{D}_B) = \frac{n_A ! (n - n_A)!}{(n + 1)!} \frac{n_B ! (n - n_B)!}{(n + 1)!}

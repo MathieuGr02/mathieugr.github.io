@@ -20,6 +20,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
+from matplotlib import cm
 
 sns.set_theme()
 ```
@@ -313,6 +314,130 @@ We can thus summarize the EM-algorithm as
 
 
 In the E-Step we estimate the expected value for each latent variable, i.e. the soft labels and in the M-Step we optimize the parameters with these new soft labels.
+
+
+```python
+def EM(X: np.array, K: int) -> tuple[np.array, np.array]:
+    means = np.array([[-1, -1], [1, 1]])
+    covs = np.array([[[1, 0.8], [0.8, 1]], [[1, -0.4], [-0.4, 1]]])
+    
+    pz = np.zeros(K) + (1 / K)
+    
+    iteration = 0
+    converged = False
+    while not converged:
+        for k in range(K):
+            
+            # E-Step
+            nominator = pz[k] * stats.multivariate_normal(mean=means[k], cov=covs[k]).pdf(X) + 1e-4
+            denominator = np.sum([pz[i] * stats.multivariate_normal(mean=means[i], cov=covs[i]).pdf(X) + 1e-4 for i in range(K)])
+            r = nominator / denominator
+            pz[k] = np.mean(r)
+            # M-Step
+            means[k] = np.sum([r[i] * X[i] for i in range(len(X))]) / np.sum(r)
+            
+            cov = np.zeros((2, 2))
+            
+            for i in range(len(X)):
+                cov += r[i] * np.outer(X[i] - means[k], X[i] - means[k])
+            covs[k] = cov /  np.sum(r)  
+            
+            #means[k] = r.T @ X / np.sum(r) + 1e-4
+            
+            #covs[k] = ((X * r[:, None])  - means[k]).T @ (X - means[k]) / np.sum(r)  + 1e-4 
+            
+            
+            log_likelihood = ...
+            
+        iteration += 1
+        
+        if iteration > 100:
+            print('stop')
+            break
+    return means, covs
+```
+
+
+```python
+np.random.seed(0)
+x = np.arange(-10, 10, 0.1)
+X, Y = np.meshgrid(x, x)
+pos = np.dstack((X, Y))
+
+norm1 = stats.multivariate_normal([3, 3], [[3, 2], [2, 3]])
+norm2 = stats.multivariate_normal([-2, -2], [[2, 1], [-2, 5]])
+
+class1 = norm1.rvs(size=100)
+class2 = norm2.rvs(size=100)
+
+data = np.vstack((class1, class2))
+mean , cov = EM(data, 2)
+print(mean, cov)
+x = np.arange(-10, 10, 0.1)
+
+norm1_pred = stats.multivariate_normal(mean[0], cov[0])
+norm2_pred = stats.multivariate_normal(mean[1], cov[1])
+
+Z1 = norm1_pred.pdf(pos)
+Z2 = norm2_pred.pdf(pos)
+
+levels = np.arange(0.0, 0.1, 0.01) + 0.01
+
+plt.contourf(X, Y, Z1, levels, extent=(-3,3,-2,2),cmap=cm.Blues, alpha=1)
+plt.contourf(X, Y, Z2, levels, extent=(-3,3,-2,2),cmap=cm.Reds, alpha=1)
+plt.scatter(class1[:, 0], class1[:, 1], marker='^', label='Class 1')
+plt.scatter(class2[:, 0], class2[:, 1], marker='+', label='Class 2')
+plt.legend()
+plt.show()
+```
+
+    stop
+    [[0 0]
+     [1 1]] [[[ 8.40027867  6.95616178]
+      [ 6.95616178 10.5413611 ]]
+    
+     [[ 8.52422479  7.14547898]
+      [ 7.14547898 10.74023968]]]
+    
+
+
+    
+![png](../images/09-Mixture-Models_files/09-Mixture-Models_16_1.png)
+    
+
+
+
+```python
+np.random.seed(0)
+x = np.arange(-10, 10, 0.1)
+X, Y = np.meshgrid(x, x)
+pos = np.dstack((X, Y))
+
+
+norm1 = stats.multivariate_normal([3, 3], [[3, 2], [2, 3]])
+norm2 = stats.multivariate_normal([-2, -2], [[2, 1], [-2, 5]])
+
+class1 = norm1.rvs(size=100)
+class2 = norm2.rvs(size=100)
+
+Z1 = norm1.pdf(pos)
+Z2 = norm2.pdf(pos)
+
+levels = np.arange(0.0, 0.1, 0.01) + 0.01
+
+#plt.contourf(X, Y, Z1, levels, extent=(-3,3,-2,2),cmap=cm.Blues, alpha=1)
+#plt.contourf(X, Y, Z2, levels, extent=(-3,3,-2,2),cmap=cm.Reds, alpha=1)
+plt.scatter(class1[:, 0], class1[:, 1], marker='^', label='Class 1')
+plt.scatter(class2[:, 0], class2[:, 1], marker='+', label='Class 2')
+plt.legend()
+plt.show()
+```
+
+
+    
+![png](../images/09-Mixture-Models_files/09-Mixture-Models_17_0.png)
+    
+
 
 # Conditional Mixtures
 
