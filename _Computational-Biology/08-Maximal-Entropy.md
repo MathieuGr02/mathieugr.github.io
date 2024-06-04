@@ -24,7 +24,7 @@ sns.set_theme()
 
 ### Laplace's Method
 
-Assume we are estimating a single parameter $\mu$, and given our data $ \mathcal{D}$ we hav calculated a posterior distribution $ \mathbb{P}(\mu | \mathcal{D})$. Because we may want to integrate the posterior over some area, because the posterior can be a complicated function to integrate, if the posterior has a single peak, we can estimate it by expanding the logarithm of the posterior around the peak.
+Assume we are estimating a single parameter $\mu$, and given our data $ \mathcal{D}$ we have calculated a posterior distribution $ \mathbb{P}(\mu | \mathcal{D})$. Because we may want to integrate the posterior over some area, because the posterior can be a complicated function to integrate, if the posterior has a single peak, we can estimate it by expanding the logarithm of the posterior around the peak.
 
 Let $\mu_*$ be the mode of the distribution, thus the peak of $ \mathbb{P}(\mu | \mathcal{D})$. 
 We definde $L(\mu) = \log \mathbb{P}(\mu |\mathcal{D)$. Expanding this around $\mu_*$ with the taylor expansion gives us 
@@ -44,7 +44,7 @@ L(\mu)
 L(\mu_*) + \frac{1}{2} L''(\mu_*) (\mu - \mu_*)^2
 $$
 
-Then setting $L''(\mu_*) = \frac{1}{\sigma^2}$ and taking the exponent we get a gaussian:
+Then setting $L''(\mu_*) = -\frac{1}{\sigma^2}$ and taking the exponent we get a gaussian:
 
 $$
 \mathbb{P}(\mu | \mathcal{D}) = e^{L(\mu)} \approx e^{L(\mu_*)} e^{ - \frac{(\mu - \mu_*)}{2 \sigma^2}}
@@ -75,7 +75,7 @@ $$
 \mathbb{P}(\mathbf{\alpha} | \mathcal{D}) \propto \exp \left( - \frac{1}{2} \sum_{i,j}(\alpha_i - \alpha_i^*) B_{ij} (\alpha_j - \alpha_j^*) \right)
 $$
 
-The covariance matrix is then given by the inverse of the hessian. If now integrate all parameters but one, the marginal distribution again is a gaussian with variance $\sigma^2_i = B_{ij}^{-1}$:
+The covariance matrix is then given by the inverse of the Hessian. If now integrate all parameters but one, the marginal distribution again is a gaussian with variance $\sigma^2_i = B_{ij}^{-1}$:
 
 $$
 \mathbb{P}(\alpha_i | \mathcal{D}) \propto \exp \left( -\frac{1}{2} \frac{(\alpha_i - \alpha_i^*)^2}{B_{ij}^{-1} \right)
@@ -366,7 +366,7 @@ Thus our best guess is to make only green widgets.
 We're given additional information that on average per day we get orders for 50 red, 100 yellow and 10 green. 
 We can setup this probability be maximizing our probability of orders under constraints of the averages. 
 So we choose the distribution which maximizes our entropy distribution, thus the distribution with the least amount of 'surprise'.
-Given $ \mathbb{P}(n_r, n_y, n_g$ our lagrange problem becomes
+Given $ \mathbb{P}(n_r, n_y, n_g)$ our lagrange problem becomes
 
 $$
 \sum_{n_r, n_y, n_g} - \mathbb{P} \log \mathbb{P} - \lambda \mathbb{P} - \lambda_r n_r \mathbb{P} - \lambda_y n_y \mathbb{P} - \lambda_g n_g \mathbb{P}  
@@ -427,13 +427,13 @@ $$
 To find our lambdas, we need that $- \frac{d \log Z}{d_i} = \langle n_i \rangle $. For our red's we get that 
 
 $$
--\frac{d \log Z}{d \lambda_r} = -\frac{d}{d \lambda_r} \log \left[ \left( \frac{1}{1 - e^{-\lambda_r}} \right) \left( \frac{1}{1 - e^{-\lambda_y}} \right) \left( \frac{1}{1 - e^{-\lambda_g}} \right) \right] = - \frac{d}{d \lambda_r} 3 - \log(1 - e^{-\lambda_r}) - \log(1 - e^{-\lambda_y}) - \log(1 - e^{-\lambda_g}) = \frac{ e^{-\lambda_r}}{1 - e^{-\lambda_r}} = \frac{1}{e^{\lambda_r} - 1}
+-\frac{d \log Z}{d \lambda_r} = -\frac{d}{d \lambda_r} \log \left[ \left( \frac{1}{1 - e^{-\lambda_r}} \right) \left( \frac{1}{1 - e^{-\lambda_y}} \right) \left( \frac{1}{1 - e^{-\lambda_g}} \right) \right] = - \frac{d}{d \lambda_r} 3 - \log(1 - e^{-\lambda_r}) - \log(1 - e^{-\lambda_y}) - \log(1 - e^{-\lambda_g}) = \frac{ e^{-\lambda_r}}{1 - e^{-\lambda_r}} 
 $$
 
 Which then gives that
 
 $$
-\frac{1}{e^{\lambda_r} - 1} = \langle n_r \rangle \Leftrightarrow e^{-\lambda} = \frac{\langle n_r \rangle}{\langle n_r \rangle + 1}
+\frac{ e^{-\lambda_r}}{1 - e^{-\lambda_r}} = \langle n_r \rangle \Leftrightarrow e^{-\lambda} = \frac{\langle n_r \rangle}{\langle n_r \rangle + 1}
 $$
 
 Our final distribution is then

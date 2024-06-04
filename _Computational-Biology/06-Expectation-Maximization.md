@@ -22,7 +22,7 @@ $$
 &= 
 \frac{1}{\sigma^n (2 \pi)^{\frac{n}{2}}} \exp \left(- \frac{n}{2\sigma^2} \left[ (\bar{x} - \mu_r)^2 + var(x)\right] \right)
 \\
-\mathbb{P}(y_1, ... | \mu_r, \sigma) 
+\mathbb{P}(y_1, ... | \mu_t, \sigma) 
 &= 
 \frac{1}{\sigma^n (2 \pi)^{\frac{n}{2}}} \exp \left(- \frac{n}{2\sigma^2} \left[ (\bar{y} - \mu_t)^2 + var(y)\right] \right)
 \end{align*}
@@ -132,7 +132,7 @@ $$
 &\propto 
 \left[var(x) + var(y) + \frac{1}{2}(\delta - (\bar{y} - \bar{x}))^2  \right]^{-(n - 1)} \\
 &\propto
-\left[ 1 + \frac{(\delta - (\bar{y} - \bar{x}))}{2(var(x) + var(y))} \right]^{-(n - 1)}
+\left[ 1 + \frac{(\delta - (\bar{y} - \bar{x}))^2}{2(var(x) + var(y))} \right]^{-(n - 1)}
 \end{align*}
 $$
 
@@ -149,7 +149,7 @@ $$
 \mathbb{P}(x | \mu, L) dx = \mathbb{P}(f(x) | \mu, L) \left| \frac{df}{dx} \right| dx = \left| \frac{d\theta}{dx} \right| \frac{dx}{\pi} = \frac{1}{\pi L} \left( 1 + \left( \frac{x - \mu}{L}  \right)^2 \right)^{-1}
 $$
 
-This is the so called cauchy distribution $ \mathbb{P}(x | \mu = 0, L=1) = \frac{1}{pi(1 + x^2)}$. 
+This is the so called cauchy distribution $ \mathbb{P}(x | \mu = 0, L=1) = \frac{1}{\pi(1 + x^2)}$. 
 Looking at the cumulants of the cauchy distribution
 
 $$
@@ -179,9 +179,9 @@ To find the optimum value $\mu^*$, thus the maximum of the function, we can take
 
 $$
 \frac{d \log [\mathbb{P}(\mu | \mathcal{D}, I)]}{d \mu} 
-= 
-\Rightarrow \sum_{i=1}^{n} \frac{d \log[1 + (x_i - \mu)^2]}{d\mu} 
-= 
+= -
+\sum_{i=1}^{n} \frac{d \log[1 + (x_i - \mu)^2]}{d\mu} 
+\Rightarrow 
 \sum_{i=1}^{n} \frac{(x_i - \mu)}{1 + (x_i - \mu)^2} \overset{!}{=} 0
 $$
 
@@ -224,7 +224,7 @@ Because $ \mathbb{P}(good) = \rho$, we get
 $$
 \begin{align*}
 \mathbb{P}(good | x_i, \mu) 
-= 
+&= 
 \frac{\mathbb{P}(good, x_i, \mu)}{\mathbb{P}(x_i, \mu)} \\
 &= 
 \frac{\mathbb{P}(x_i | good, \mu) \mathbb{P}(\mu) \mathbb{P}(good)}{\mathbb{P}(x_i | good, \mu) \mathbb{P}(\mu) \mathbb{P}(good) + \mathbb{P}(x_i | bad, \mu) \mathbb{P}(\mu) \mathbb{P}(bad)} \\

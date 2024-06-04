@@ -17,11 +17,30 @@ tags:
 import numpy as np
 ```
 
+# Sorting
+
+Imagine we have a sequence of $n$ elements $e_1, ..., e_n$, where each element has a key $k_i = key(e_i)$.
+In sorting we impose a partial order onto the keys which then have the following properties
+* Reflexive: $k \leq k$
+* Transitive: $k \leq k'$ and $k' \leq k'' \Rightarrow k \leq k''$
+* Antisymmetric: $k \leq k'$ and $k' \leq k \Rightarrow k = k'$
+
+# Analysis
+
+* ***Running Time***: How many key comparisons and swaps of elements are executed
+* ***Space Consumption***: How much space is used in addition to the space occupied by the input sequence
+
+# Properties
+
+* ***Adaptive***: A algorithm is adaptive if it is faster on an already partially sorted input compared to an unsorted one
+* ***In-place***: A algorithm is in-place if it needs no additional storage beyonf the input array and a constant amount of space, i.e. its space consumption is independent of the input size 
+* ***Stable***: A algorithm is stable if when there appear elements with the same value, then in the output sequence they hold the same order as in the input sequence
+
 # Selection Sort
 
 ---
 
-Selection sort works by iterating over the whole array from the i-th position, selecting the largest value in the range $[i, n]$ and swapping it with the i-th element and then increment $i+1 \rightarrow 1$.
+Selection sort works by iterating over the whole array from the i-th position, selecting the smallest value in the range $[i, n]$ and swapping it with the $i$-th element and then increment $i+1 \rightarrow i$.
 
 ### Properties:
 

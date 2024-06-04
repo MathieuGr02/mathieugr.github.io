@@ -293,7 +293,8 @@ $$
 \frac{1}{n+1} \exp \left(n (f_A \log f_A + (1 - f_A) \log (1 - f_A)) \right) = \frac{1}{n+1} \exp (- nH[f_A]) 
 $$
 
-Because $\rho_A^* = \frac{n_A}{n}$, we have $n + 1$ possibilities for $\rho_A$. Which gives that $f(Model \ A) = \frac{1}{n+1}   $  and $ \mathbb{P}(\mathcal{D} | \rho_A^* ) = e^{- nH[f_A]}$.
+Because $\rho_A^* = \frac{n_A}{n}$, we have $n + 1$ possibilities for $\rho_A$. 
+Which gives that $f(Model \ A) = \frac{1}{n+1}   $  and $ \mathbb{P}(\mathcal{D} | \rho_A^* ) = e^{- nH[f_A]}$.
 
 For the dependent model we get
 
@@ -313,7 +314,7 @@ $$
 \end{align*}
 $$
 
-Here then $\frac{3! n!}{(n+3)!}$ shows how many ways $(\rho_{AB}, \rho_{A\bar{B}}), \rho_{\bar{A}B} $ can be chosen. Imagine we have $n$ points and three dividers and depending on where we set these dividers we get 4 classes. Then there are in total $ \begin{pmatrix} n + 3 \\ 3 \end{pmatrix}$ ways to set these dividers, which is the inverse of our occam factor.
+Here then $\frac{3! n!}{(n+3)!}$ shows how many ways $(\rho_{AB}, \rho_{A\bar{B}}, \rho_{\bar{A}B}) $ can be chosen. Imagine we have $n$ points and three dividers and depending on where we set these dividers we get 4 classes. Then there are in total $ \begin{pmatrix} n + 3 \\ 3 \end{pmatrix}$ ways to set these dividers, which is the inverse of our occam factor.
 Looking at the posterior with a uniform prior and with the fraction $R = \frac{\mathbb{P}(D|dep, I)}{\mathbb{P}(indep, I)}$ we get the posterior
 
 $$

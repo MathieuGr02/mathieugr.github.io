@@ -16,12 +16,17 @@ tags:
 
 
 ```python
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+x = 'x'
+def setroomlighting(other):
+    print(other)
 
-sns.set_theme()
+other = 'bright'
+
+setroomlighting('bright')
 ```
+
+    bright
+    
 
 # Non-Linear Latent variable
 

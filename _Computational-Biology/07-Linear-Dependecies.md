@@ -25,7 +25,7 @@ This then gives us
 
 $$
 \begin{align*}
-    \frac{\partial \triangle^2_x}{\partial b} 
+    \frac{\partial \triangle^2_y}{\partial b} 
     &= 
     2 \sum_{i=1}^n \left( y_i - ax_i - b \right)   \\
     &= 
@@ -51,7 +51,7 @@ In the case of switching the axis, we get the linear function $x = \frac{y}{a} -
 
 $$
 \begin{align*}
-    \frac{\partial \triangle^2_y}{\partial b} 
+    \frac{\partial \triangle^2_x}{\partial b} 
     &= 
     2 \sum_{i=1}^n \left( x_i - \frac{y_i}{a} + \frac{b}{a} \right) \frac{1}{a}  \\
     &= 
@@ -75,7 +75,7 @@ $$
 \end{align*}
 $$
 
-Which actually gives us two different values, and thus 2 completely different lines. What happens is that, when looking at the standard cartesian coordinate system, with our first regression function, we minimize the vertical squared error, thus we assume our noise is vertical, while with the second regression, we minimize the horizontal squared error, thus we assume our noise is horizontal.
+Which actually gives us two different values, and thus 2 completely different lines. What happens is that, when looking at the standard cartesian coordinate system, with our first regression function, we minimize the vertical squared error, thus we assume our noise is vertical, while with the second regression, we minimize the horizontal squared error, thus we assume our noise is horizontal.  
 
 When looking at errors, there exist measurement error which are caused by machines etc. Then there are also intrinsic fluctuations.
 
@@ -85,7 +85,7 @@ $$
 \mathbb{P}(x)\mathbb{P}(y) = \frac{1}{2 \pi \sigma_x \sigma_y} \exp \left( - \frac{x^2}{2 \sigma^2_x} - \frac{y^2}{2 \sigma^2_y} \right)
 $$
 
-Using the transformation $x = u cos(\theta) + w sin(\theta) - x_0$ and $y = w cos(\theta) + u sin(\theta) - y_0$
+Using the transformation $x = u cos(\theta) + w sin(\theta) - x_0$ and $y = w cos(\theta) - u sin(\theta) - y_0$
 
 ![image](../images/coordinate-transformation.png)
 
@@ -94,7 +94,7 @@ With this transformation we can transform our distributions
 $$
 \begin{align*}
     \sum_{i=1}^n x_i^2 &= \sum_{i=1}^n (u_i cos(\theta) + w_i sin(\theta) - x_0)^2 \\
-    \sum_{i=1}^n y_i^2 &= \sum_{i=1}^n (w_i cos(\theta) + u_i sin(\theta) - y_0)^2
+    \sum_{i=1}^n y_i^2 &= \sum_{i=1}^n (w_i cos(\theta) - u_i sin(\theta) - y_0)^2
 \end{align*}
 $$
 
@@ -258,8 +258,8 @@ $$
 \frac{1}{2 \pi \sigma_x \sigma_y} \exp \left( - \frac{1}{2} (\mathbf{\nu} - \mathbf{\mu})^T M (\mathbf{\nu} - \mathbf{\mu}) \right)
 $$
 
-Thus the natural coordinate system, is the one that diagonalizes matrix M $M = R^{-1} D R$. 
-Otherwise said, the columns in $R$ contain the eigenvectors of M. 
+Thus the natural coordinate system, is the one that diagonalizes matrix $M$, $R M R^{-1} =  D $. 
+Otherwise said, the columns in $R$ contain the eigenvectors of $M$. 
 We can write any vector $\mathbf{\nu}$ as a linear combination of the eigenvectors $ \mathbf{\nu} = x \mathbf{\nu}_1 + y \mathbf{\nu}_2$. With the assumption that our eigenvectors are normalised i.e. $ ||\mathbf{\nu}|| = 1$ and that two eigenvectors which form a basis are orthogonal to eachother $\mathbf{\nu}_1^T \mathbf{\nu}_2 = 0$ we get:
 
 $$
@@ -315,7 +315,7 @@ Thus we want to check that the line
 $$
 \begin{pmatrix} u - \bar{u} \\ w - \bar{w} \end{pmatrix}
 \propto
-\begin{pmatrix} 1 \\ alpha \end{pmatrix}
+\begin{pmatrix} 1 \\ \alpha \end{pmatrix}
 $$
 
 is an eigenvector of C.
@@ -332,9 +332,9 @@ $$
 $$
 \begin{align*}
     & \Rightarrow V_{uw} + \alpha V_{ww} = \alpha (V_{uu} + \alpha V_{uw}) \\
-    & \Leftrightarrow \alpha^2 V_{uw} + \alpha (V_{ww} - V_{uu}) + V_{uw} \overset{!}{=} 0 \\
-    & \Rightarrow \frac{ (V_{ww} - V_{uu}) \pm \sqrt{(V_{uu} - V_{ww})^2 + 4 V_{uw}^2} }{2V_{uw}}
-    & \Rightarrow \frac{ (V_{ww} - V_{uu})}{2V_{uw}} \pm \sqrt{ 1 + \left( \frac{V_{uu} - V_{ww}}{2 V_{uw}} \right)^2 }
+    & \Leftrightarrow \alpha^2 V_{uw} + \alpha (V_{uu} - V_{ww}) - V_{uw} \overset{!}{=} 0 \\
+    & \Rightarrow \frac{ (V_{uu} - V_{ww}) \pm \sqrt{(V_{uu} - V_{ww})^2 + 4 V_{uw}^2} }{2V_{uw}}
+    & \Rightarrow \frac{ (V_{uu} - V_{ww})}{2V_{uw}} \pm \sqrt{ 1 + \left( \frac{V_{uu} - V_{ww}}{2 V_{uw}} \right)^2 }
 \end{align*}
 $$
 
@@ -346,7 +346,7 @@ This isn't dependend on the amount of dimensions.
 The normalization constant of a multivariate gaussian is the square root of determinant of the Covariance matrix, i.e. $ \frac{1}{\sqrt{|C|}}$.
 Looking at how likely is is that there is dependence at all, no dependene occurs at $\alpha = 0$. 
 We can thus calculate to what extent the posterior $ \mathbb{P}(\alpha | \mathcal{D})$ overlaps $\alpha=0$.
-$ \mathbb{P}( \mathcal{D} | \alpha) = \left[ V_{uu} V_{ww} \right]^{-\frac{n-1}{2}}$. For $ \mathbb{P}(\mathcal{D} | \alpha_*)$ we note that $X^2 = \frac{1}{n} \sum_{i} (x_i - \bar{x})^2$ and $Y^2 = \frac{1}{n} \sum_{i} (y_i - \bar{y})^2$, which means that $X^2Y^2 = V_{xx}^2 V_{yy}^2$, (???) which is the determinant of the covariance matrix in the normal system. 
+$ \mathbb{P}( \mathcal{D} | \alpha) = \left[ V_{uu} V_{ww} \right]^{-\frac{n-1}{2}}$. For $ \mathbb{P}(\mathcal{D} | \alpha_*)$ we note that $X^2 = \frac{1}{n} \sum_{i} (x_i - \bar{x})^2$ and $Y^2 = \frac{1}{n} \sum_{i} (y_i - \bar{y})^2$, which means that $X^2Y^2 = V_{xx}^2 V_{yy}^2$, which is the determinant of the covariance matrix in the normal system. 
 Because the Covariance is invariant to rotation we get 
 
 $$
