@@ -157,5 +157,5 @@ def plot_population():
     plt.show()
 
 if __name__ == '__main__':
-    plot_common_ancestor_hist(5000)
+    plot_common_ancestor_hist(1000)
     plot_population()
