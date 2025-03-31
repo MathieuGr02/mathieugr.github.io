@@ -74,6 +74,12 @@ class Simulation:
             self.population.append(new_population)
 
     def common_ancestor(self, first: Individual, second: Individual) -> Individual | None:
+        """
+        Find common ancestor between two individuals
+        :param first:
+        :param second:
+        :return: MRCA if exist else None
+        """
         first_parents: list[Individual] = [first]
         second_parents: list[Individual] = [second]
 
@@ -104,6 +110,11 @@ class Simulation:
         return None
 
     def common_ancestor_whole(self, children: list[Individual]) -> Individual | None:
+        """
+        Find common ancestor of whole population
+        :param children: Population
+        :return: MRCA if it exist else None
+        """
         common_ancestor_found: bool = False
         current_generation = children
         while not common_ancestor_found:
