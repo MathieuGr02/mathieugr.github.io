@@ -2,6 +2,7 @@ import numpy as np
 from enum import StrEnum, IntEnum
 import seaborn as sns
 from matplotlib import pyplot as plt
+from pandas.core.interchange.from_dataframe import primitive_column_to_ndarray
 
 sns.set_theme()
 
@@ -34,8 +35,9 @@ def base_to_index(base: str) -> int:
 params = {
     "bases": [Base.A, Base.T, Base.C, Base.G],
     "tf_length": 8,
-    "promoter_length": 400,
-    "amount_tf": 5
+    "promoter_length": 100,
+    "amount_tf": 5,
+    "bm_amount_sequences": 10
 }
 
 def ppm_score(ppm: np.array) -> float:
@@ -157,13 +159,23 @@ class BaumWelch:
     forward: np.array
     backward: np.array
     P = np.array
-    sequence: str
+    sequences: list[str]
 
-    def __init__(self, sequence: str):
-        self.sequence = sequence
+    def __init__(self, sequences: list[str]):
+        self.sequences = sequences
         self.A = np.random.random((4, 4))
-        print(self.A.shape)
-        self.E = np.random.random((4, 4, 4))
+        self.E = np.random.random((4, 4))
+
+    def calc_sequence_probability(self, sub_sequence: str) -> float:
+        """
+        Calculate probability of sequence given a probability matrix
+        :param sub_sequence:
+        :return: Probability
+        """
+        p = 1
+        for pos, base in enumerate(sub_sequence):
+            p *= self.ppm[base_to_index(base), pos]
+        return p
 
     def emission_prob(self, state: State | int, base: str) ->  float:
         return self.E[state, base_to_index(base)]
@@ -171,10 +183,9 @@ class BaumWelch:
     def transition_prob(self, prev: State | int, next: State | int) -> float:
         return self.A[prev, next]
 
-    def forwards(self) -> np.array:
-        length = len(self.sequence)
+    def forwards(self, j) -> np.array:
+        length = len(self.sequences[j])
         paths = np.zeros((4, length))
-
         # Initialize starting state
         paths[0, State.Start] = 1
 
@@ -183,21 +194,21 @@ class BaumWelch:
         for i in range(length):
             # $f_k(i) = e_k(x_i) \sum_l (f_l(i-1) a_{lk})$
             paths[State.BindingSite, i] = (
-                self.emission_prob(State.BindingSite, self.sequence[i])
+                self.emission_prob(State.BindingSite, self.sequences[j][i])
                 *
-                sum([prob * self.transition_prob(j, State.BindingSite) for (j, prob) in enumerate(paths[:, i - 1])])
+                sum([prob * self.transition_prob(k, State.BindingSite) for (k, prob) in enumerate(paths[:, i - 1])])
             )
             paths[State.Random, i] = (
-                self.emission_prob(State.Random, self.sequence[i])
+                self.emission_prob(State.Random, self.sequences[j][i])
                 *
-                sum([prob * self.transition_prob(j, State.Random) for (j, prob) in
+                sum([prob * self.transition_prob(k, State.Random) for (k, prob) in
                      enumerate(paths[:, i - 1])])
             )
 
         return paths
 
-    def backwards(self) -> np.array:
-        length = len(self.sequence)
+    def backwards(self, j) -> np.array:
+        length = len(self.sequences[j])
         paths = np.zeros((4, length))
 
         # Initialize ending state
@@ -208,13 +219,14 @@ class BaumWelch:
         for i in range(length - 2, 0, -1):
             # $b_k(i) = \sum_{l} b_l(i+1)e_l(x_{i+1})a_{kl}$
             paths[State.BindingSite, i] = sum(
-                [prob * self.emission_prob(j, self.sequence[i + 1]) * self.transition_prob(j, State.BindingSite) for (j, prob)
+                [prob * self.emission_prob(k, self.sequences[j][i + 1]) * self.transition_prob(k, State.BindingSite) for
+                 (k, prob)
                  in enumerate(paths[:, i + 1])]
             )
 
             paths[State.Random, i] = sum(
-                [prob * self.emission_prob(j, self.sequence[i + 1]) * self.transition_prob(j, State.Random) for
-                 (j, prob) in enumerate(paths[:, i + 1])]
+                [prob * self.emission_prob(k, self.sequences[j][i + 1]) * self.transition_prob(k, State.Random) for
+                 (k, prob) in enumerate(paths[:, i + 1])]
             )
 
         return paths
@@ -223,20 +235,59 @@ class BaumWelch:
         n, m = self.forward
         for j in range(n):
             for i in range(m):
-                self.forward[k, i] * self.transition_prob(k, l) * self.emission_prob(l, self.sequence[i + 1]) * self.backward[l, i + 1]
+                self.forward[k, i] * self.transition_prob(k, l) * self.emission_prob(l, self.sequences[i + 1]) * self.backward[l, i + 1]
 
 
     def calc_E(self, k: int, l: int):
         pass
 
-    def run(self):
-        self.forward = self.forwards()
-        self.backward = self.backwards()
-        self.calc_A()
-        self.calc_E()
+    def run(self, repeats: int):
+        for _ in range(repeats):
+            amount = len(self.sequences)
+            length = len(self.sequences[0])
+            forward_calculations = []
+            backward_calculations = []
+            probabilities = []
+            for j in range(amount):
+                forward_calculations.append(self.forwards(j))
+                backward_calculations.append(self.backwards(j))
 
+            forward_calculations = np.array(forward_calculations)
+            backward_calculations = np.array(backward_calculations)
 
-if __name__ == '__main__':
+            # shape = (sequence, state, base)
+
+            for k in range(4):
+                for l in range(4):
+                    sum: float = 0
+                    for j in range(amount):
+                        inner_sum: float = 0
+                        for i in range(length - 1):
+                            forward_calculations[j][k][i] * self.A[k,l] * self.E[l, base_to_index(self.sequences[j][i+1])] * backward_calculations[j][l][i + 1]
+                        sum += 1 / 1 * inner_sum # 1 / prob
+                    self.A[k, l] = sum
+
+            for k in range(4):
+                for beta in range(4):
+                    sum: float = 0
+                    for j in range(amount):
+                        inner_sum: float = 0
+                        for i in range(length):
+                            if base_to_index(self.sequences[j][i]) == beta:
+                                inner_sum += backward_calculations[j][k][i] * backward_calculations[j][l][i]
+                        sum += 1 / 1 * inner_sum # 1 / prob
+                    self.E[k, beta] = sum
+
+            # Recalculate prob
+            for k in range(4):
+                for l in range(4):
+                    self.A[k, l] /= np.sum(self.A[k])
+
+            for k in range(4):
+                for beta in range(4):
+                    self.E[k, l] /= np.sum(self.E[k])
+
+def generate_sequence() -> (np.array, np.array):
     # Randomly generate promoter sequence
     promoter_sequence = np.random.choice(params["bases"], params["promoter_length"])
 
@@ -253,6 +304,12 @@ if __name__ == '__main__':
         positions.append([start, end])
 
     promoter_sequence = "".join(promoter_sequence)
+    return promoter_sequence, positions
+
+if __name__ == '__main__':
+    ppm, pwm = get_ppm_pwm()
+
+    promoter_sequence, positions = generate_sequence()
     print(f"PPM : {ppm}\n"
           f">Promoter\n{promoter_sequence}\n"
           f"TF positions : {positions}")
@@ -277,5 +334,15 @@ if __name__ == '__main__':
     ax.plot(range(0, params["promoter_length"]), tf_arr_0.reshape(params["promoter_length"]))
     fig.show()
 
-    BW = BaumWelch(promoter_sequence)
-    BW.run()
+    sequences = []
+    positions = []
+    for i in range(params["bm_amount_sequences"]):
+        sequence, position = generate_sequence()
+        sequences.append(sequence)
+        positions.append(position)
+
+    BW = BaumWelch(sequences)
+    BW.run(100)
+    print(BW.A, BW.E)
+    print(f'True PPM: \n{ppm}\n'
+          f'Pred PPM: \n{BW.A}')
