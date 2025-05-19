@@ -36,7 +36,7 @@ params = {
     "bases": [Base.A, Base.T, Base.C, Base.G],
     "tf_length": 8,
     "promoter_length": 100,
-    "amount_tf": 5,
+    "amount_tf": 2,
     "bm_amount_sequences": 10
 }
 
@@ -151,8 +151,6 @@ class SegmentationModel:
         for i in range(length):
             self.G[i] = self.calc_G(i, 8)
 
-
-
 class BaumWelch:
     A: np.array
     E: np.array
@@ -183,51 +181,6 @@ class BaumWelch:
     def transition_prob(self, prev: State | int, next: State | int) -> float:
         return self.A[prev, next]
 
-    def forwards(self, j) -> np.array:
-        length = len(self.sequences[j])
-        paths = np.zeros((4, length))
-        # Initialize starting state
-        paths[0, State.Start] = 1
-
-        # Iterative calculation instead of recursion
-        # i is the current base position
-        for i in range(length):
-            # $f_k(i) = e_k(x_i) \sum_l (f_l(i-1) a_{lk})$
-            paths[State.BindingSite, i] = (
-                self.emission_prob(State.BindingSite, self.sequences[j][i])
-                *
-                sum([prob * self.transition_prob(k, State.BindingSite) for (k, prob) in enumerate(paths[:, i - 1])])
-            )
-            paths[State.Random, i] = (
-                self.emission_prob(State.Random, self.sequences[j][i])
-                *
-                sum([prob * self.transition_prob(k, State.Random) for (k, prob) in
-                     enumerate(paths[:, i - 1])])
-            )
-
-        return paths
-
-    def backwards(self, j) -> np.array:
-        length = len(self.sequences[j])
-        paths = np.zeros((4, length))
-
-        # Initialize ending state
-        paths[-1, State.End] = 1
-
-        # Iterative calculation instead of recursion
-        # i is the current base position
-        for i in range(length - 2, 0, -1):
-            # $b_k(i) = \sum_{l} b_l(i+1)e_l(x_{i+1})a_{kl}$
-            paths[State.BindingSite, i] = sum(
-                [prob * self.emission_prob(k, self.sequences[j][i + 1]) * self.transition_prob(k, State.BindingSite) for
-                 (k, prob)
-                 in enumerate(paths[:, i + 1])]
-            )
-
-            paths[State.Random, i] = sum(
-                [prob * self.emission_prob(k, self.sequences[j][i + 1]) * self.transition_prob(k, State.Random) for
-                 (k, prob) in enumerate(paths[:, i + 1])]
-            )
 
         return paths
 
@@ -237,55 +190,18 @@ class BaumWelch:
             for i in range(m):
                 self.forward[k, i] * self.transition_prob(k, l) * self.emission_prob(l, self.sequences[i + 1]) * self.backward[l, i + 1]
 
-
     def calc_E(self, k: int, l: int):
         pass
 
     def run(self, repeats: int):
-        for _ in range(repeats):
+        for epoch in range(repeats):
             amount = len(self.sequences)
             length = len(self.sequences[0])
-            forward_calculations = []
-            backward_calculations = []
             probabilities = []
-            for j in range(amount):
-                forward_calculations.append(self.forwards(j))
-                backward_calculations.append(self.backwards(j))
-
-            forward_calculations = np.array(forward_calculations)
-            backward_calculations = np.array(backward_calculations)
-
+            for sequence in sequences:
+                SM = SegmentationModel(sequence, self.A)
+                SM.run()
             # shape = (sequence, state, base)
-
-            for k in range(4):
-                for l in range(4):
-                    sum: float = 0
-                    for j in range(amount):
-                        inner_sum: float = 0
-                        for i in range(length - 1):
-                            forward_calculations[j][k][i] * self.A[k,l] * self.E[l, base_to_index(self.sequences[j][i+1])] * backward_calculations[j][l][i + 1]
-                        sum += 1 / 1 * inner_sum # 1 / prob
-                    self.A[k, l] = sum
-
-            for k in range(4):
-                for beta in range(4):
-                    sum: float = 0
-                    for j in range(amount):
-                        inner_sum: float = 0
-                        for i in range(length):
-                            if base_to_index(self.sequences[j][i]) == beta:
-                                inner_sum += backward_calculations[j][k][i] * backward_calculations[j][l][i]
-                        sum += 1 / 1 * inner_sum # 1 / prob
-                    self.E[k, beta] = sum
-
-            # Recalculate prob
-            for k in range(4):
-                for l in range(4):
-                    self.A[k, l] /= np.sum(self.A[k])
-
-            for k in range(4):
-                for beta in range(4):
-                    self.E[k, l] /= np.sum(self.E[k])
 
 def generate_sequence() -> (np.array, np.array):
     # Randomly generate promoter sequence
