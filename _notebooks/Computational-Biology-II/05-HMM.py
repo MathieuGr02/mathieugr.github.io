@@ -31,13 +31,23 @@ def base_to_index(base: str) -> int:
         case Base.C: return 2
         case Base.G: return 3
 
+def index_to_base(index: int) -> str:
+    match index:
+        case 0:
+            return Base.A
+        case 1:
+            return Base.T
+        case 2:
+            return Base.C
+        case 3:
+            return Base.G
 
 params = {
     "bases": [Base.A, Base.T, Base.C, Base.G],
     "tf_length": 8,
-    "promoter_length": 100,
-    "amount_tf": 2,
-    "bm_amount_sequences": 10
+    "promoter_length": 500,
+    "amount_tf": 10,
+    "bm_amount_sequences": 30
 }
 
 def ppm_score(ppm: np.array) -> float:
@@ -81,6 +91,17 @@ def get_tf_sequence(ppm: np.array) -> np.array:
     tf = ["G", "C", "C", "G", "G", "C", "C", "C"]
     return tf
 
+def calc_sequence_probability(sequence: str, WM) -> float:
+    """
+    Calculate probability of sequence given a probability matrix
+    :param sequence:
+    :return: Probability
+    """
+    p = 1
+    for pos, base in enumerate(sequence):
+        p *= WM[base_to_index(base), pos]
+    return p
+
 class SegmentationModel:
     R = []
     R_prime = []
@@ -95,16 +116,7 @@ class SegmentationModel:
         self.G = np.zeros(len(sequence))
         self.ppm = weight_matrices
 
-    def calc_sequence_probability(self, sub_sequence: str) -> float:
-        """
-        Calculate probability of sequence given a probability matrix
-        :param sub_sequence:
-        :return: Probability
-        """
-        p = 1
-        for pos, base in enumerate(sub_sequence):
-            p *= self.ppm[base_to_index(base), pos]
-        return p
+
 
     def calc_forward(self, i: int) -> float:
         p_alpha = 0.25
@@ -112,7 +124,7 @@ class SegmentationModel:
         sum = 0
         # First i where promoter seq. of length 8 fits
         if i >= l - 1:
-            p = self.calc_sequence_probability(self.sequence[i - l + 1: i + 1])
+            p = calc_sequence_probability(self.sequence[i - l + 1: i + 1], self.ppm)
             R = np.cumprod(self.R[i - l + 1: i])[-1]
             sum = p * (1 / R)
         return p_alpha + sum
@@ -122,7 +134,7 @@ class SegmentationModel:
         _, l = self.ppm.shape
         sum = 0
         if len(self.sequence) - l >= i >= 1:
-            p = self.calc_sequence_probability(self.sequence[i: i + l])
+            p = calc_sequence_probability(self.sequence[i: i + l], self.ppm)
             R_prime = np.cumprod(self.R_prime[i + 1: i + l])[-1]
             sum = p * (1 / R_prime)
         return p_alpha + sum
@@ -137,7 +149,7 @@ class SegmentationModel:
             denom = 1
             for k in range(i - l + 1, i + 1):
                 denom *= self.R_prime[k]
-            return self.calc_sequence_probability(self.sequence[i + 1 - l:i + 1]) * ratio / denom
+            return calc_sequence_probability(self.sequence[i + 1 - l:i + 1], self.ppm) * ratio / denom
         else:
             return 0
 
@@ -152,56 +164,39 @@ class SegmentationModel:
             self.G[i] = self.calc_G(i, 8)
 
 class BaumWelch:
-    A: np.array
-    E: np.array
-    forward: np.array
-    backward: np.array
-    P = np.array
     sequences: list[str]
+    WM: np.array
 
     def __init__(self, sequences: list[str]):
         self.sequences = sequences
-        self.A = np.random.random((4, 4))
-        self.E = np.random.random((4, 4))
+        self.WM = np.random.rand(4, params["tf_length"])
 
-    def calc_sequence_probability(self, sub_sequence: str) -> float:
-        """
-        Calculate probability of sequence given a probability matrix
-        :param sub_sequence:
-        :return: Probability
-        """
-        p = 1
-        for pos, base in enumerate(sub_sequence):
-            p *= self.ppm[base_to_index(base), pos]
-        return p
+    def posterior(self, sequence: str, G: list[float]) -> list[float]:
+        posterior = []
+        for i in range(params["tf_length"], len(G)):
+            posterior.append(calc_sequence_probability(sequence[i - params["tf_length"]: i], self.WM) * G[i])
 
-    def emission_prob(self, state: State | int, base: str) ->  float:
-        return self.E[state, base_to_index(base)]
+        return posterior
 
-    def transition_prob(self, prev: State | int, next: State | int) -> float:
-        return self.A[prev, next]
+    def run(self, MAX_ITERATIONS: int = 100):
+        for _ in range(MAX_ITERATIONS):
+            expected_counts = np.zeros_like(self.WM)
 
-
-        return paths
-
-    def calc_A(self, k: int, l: int):
-        n, m = self.forward
-        for j in range(n):
-            for i in range(m):
-                self.forward[k, i] * self.transition_prob(k, l) * self.emission_prob(l, self.sequences[i + 1]) * self.backward[l, i + 1]
-
-    def calc_E(self, k: int, l: int):
-        pass
-
-    def run(self, repeats: int):
-        for epoch in range(repeats):
-            amount = len(self.sequences)
-            length = len(self.sequences[0])
-            probabilities = []
             for sequence in sequences:
-                SM = SegmentationModel(sequence, self.A)
+                SM = SegmentationModel(sequence, self.WM)
                 SM.run()
-            # shape = (sequence, state, base)
+                posterior = self.posterior(sequence, SM.G)
+
+                for i in range(params["tf_length"] - 1, len(sequence)):
+                    post_prob = posterior[i - params["tf_length"] - 1]
+                    start = i - (params["tf_length"] - 1)
+                    subseq = sequence[start: i]
+                    for pos, base in enumerate(subseq):
+                        b_index = base_to_index(base)
+                        expected_counts[b_index, pos] += post_prob
+
+            expected_counts += 1e-6
+            self.WM = expected_counts / expected_counts.sum(axis=0, keepdims=True)
 
 def generate_sequence() -> (np.array, np.array):
     # Randomly generate promoter sequence
@@ -234,12 +229,6 @@ if __name__ == '__main__':
     SM.run()
     max = np.argmax(SM.G)
 
-    print(
-        f"{'Sequence':<8}| {promoter_sequence}\n"
-        f"{'True':<8}| {'':<{positions[0][0]}}++++++++{'':>{positions[0][1]}}\n"
-        f"{'Max':<8}| {'':<{max - params["tf_length"] + 1}}--------{'':>{max + 1}}"
-    )
-
     tf_arr_0 = np.zeros((1, params["promoter_length"]))
     for (start, end) in positions:
         for i in range(start, end):
@@ -258,7 +247,26 @@ if __name__ == '__main__':
         positions.append(position)
 
     BW = BaumWelch(sequences)
-    BW.run(100)
-    print(BW.A, BW.E)
+    BW.run(200)
+    print(BW.WM)
     print(f'True PPM: \n{ppm}\n'
-          f'Pred PPM: \n{BW.A}')
+          f'Pred PPM: \n{BW.WM}')
+
+    error = np.sum(np.sum(np.abs(ppm - BW.WM)))
+    print("Error: ", error)
+
+    SM = SegmentationModel(promoter_sequence, BW.WM)
+    SM.run()
+    max = np.argmax(SM.G)
+
+    tf = ""
+    index = np.argmax(BW.WM, axis=0)
+    for i in index:
+        tf += index_to_base(i)
+    print(f'Best: {''.join(get_tf_sequence(ppm))}\n',
+          f'Pred: {tf}')
+
+    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+    ax.plot(range(0, params["promoter_length"]), SM.G)
+    ax.plot(range(0, params["promoter_length"]), tf_arr_0.reshape(params["promoter_length"]))
+    fig.show()
